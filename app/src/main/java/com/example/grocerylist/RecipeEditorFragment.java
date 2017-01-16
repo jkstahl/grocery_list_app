@@ -164,7 +164,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     }
 
                     List<Ingredients> ingredientList = ((IngredientsAdapter) ingredientsList.getAdapter()).getIngredientList();
-                    // TODO Delete ingredients from recipe ID
+                    // Delete ingredients from recipe ID
                     productDatabase.deleteIngredientsFromRecipe(recipe);
                     for (Ingredients ing : ingredientList) {
 

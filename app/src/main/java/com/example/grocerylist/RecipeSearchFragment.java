@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -167,6 +169,13 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
             //View view = getActivity().getLayoutInflater().inflate(R.layout.list_prod_item, null);
             TextView recipeName = (TextView) view.findViewById(R.id.recipe_name_label);
             recipeName.setText(cursor.getString(cursor.getColumnIndex("NAME")));
+
+            ImageView imageView = (ImageView) view.findViewById(R.id.recipe_image);
+            byte[] imageRaw = (byte[])cursor.getBlob(cursor.getColumnIndex("THUMBNAIL"));
+            if (imageRaw != null && imageRaw.length > 1) {
+                Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
+                imageView.setImageBitmap(imageBitmap);
+            }
         }
 
 
