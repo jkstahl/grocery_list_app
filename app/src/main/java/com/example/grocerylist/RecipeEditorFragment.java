@@ -160,6 +160,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     ProductListDB productDatabase = DatabaseHolder.getDatabase(getActivity());
                     if (newRecipe) {
                         productDatabase.addEntryToDatabase(recipe);
+                        returnIntent.putExtra("RECIPE_ID", "" + recipe.get("_id"));
                     }
 
                     List<Ingredients> ingredientList = ((IngredientsAdapter) ingredientsList.getAdapter()).getIngredientList();

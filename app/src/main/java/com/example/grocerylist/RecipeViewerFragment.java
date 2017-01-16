@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -195,6 +197,13 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
             if (recipeList.containsKey(days[position])){
 
                 ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText((String) recipeItem.get("NAME"));
+                ImageView imageView = (ImageView) convertView.findViewById(R.id.recipe_image);
+                byte[] imageRaw = (byte[])recipeItem.get("THUMBNAIL");
+                if (imageRaw != null && imageRaw.length > 1) {
+                    Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
+                    imageView.setImageBitmap(imageBitmap);
+                }
+
                 Log.d("recipelistitem", "Day: " + days[position] + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));
                 // Delete recipe if there is one there.
                 ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.delete_recipe_button);
