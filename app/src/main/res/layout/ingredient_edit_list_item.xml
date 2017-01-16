@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/ingredient_name_edit"
+        android:imeOptions="actionDone"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/ingredients_edit_add_button"
+        android:layout_toLeftOf="@+id/ingredients_edit_add_button"
+        android:hint="Add Ingredient"
+        android:layout_alignBottom="@+id/ingredients_edit_add_button" />
+
+    <ImageButton
+        android:src="@android:drawable/ic_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/ingredients_edit_cancel_button" />
+
+    <ImageButton
+        android:src="@android:drawable/ic_input_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/ingredients_edit_cancel_button"
+        android:layout_toStartOf="@+id/ingredients_edit_cancel_button"
+        android:id="@+id/ingredients_edit_add_button" />
+
+</RelativeLayout>
