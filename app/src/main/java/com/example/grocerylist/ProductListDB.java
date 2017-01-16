@@ -17,7 +17,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 11;
+	public static final int DATABASE_VERSION = 12;
     // TODO If we update add new columns and tables if needed to database.
 	
 	public ProductListDB(Context context) {
@@ -383,5 +383,15 @@ public class ProductListDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int numDeleted = db.delete(Ingredients.TABLE_PRODUCTS, "RECIPE_ID = " + recipe.get("_id"), null);
         Log.d("database", "Deleting " + numDeleted + " records with list id " + recipe.get("_id"));
+    }
+
+    public Cursor getRecipeFromId(String stringExtra) {
+        Log.d("database", "Getting recipe with id " + stringExtra);
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor recipeCursor = db.query(Recipe.TABLE_RECIPE,
+                RecipePackager.PRODUCT_COLUMNS,
+                "_id = " + stringExtra, null, null, null, null, null);
+        recipeCursor.moveToFirst();
+        return recipeCursor;
     }
 }

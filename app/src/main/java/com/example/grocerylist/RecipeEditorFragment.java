@@ -56,13 +56,18 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        ProductListDB productDatabase = DatabaseHolder.getDatabase(getActivity());
+
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.recipe_edit, container, false);
         Intent contextIntent = getActivity().getIntent();
         newRecipe = contextIntent.hasExtra("NEW_RECIPE_NAME");
         if (newRecipe) {
             recipe = new RecipePackager();
         } else {
-            recipe = new RecipePackager(contextIntent);
+            recipe = new RecipePackager();
+            Cursor recipeCursor = productDatabase.getRecipeFromId((String) contextIntent.getStringExtra("RECIPE_ID"));
+            recipe.setCursorData(recipeCursor);
+            //recipe = new RecipePackager(contextIntent);
         }
 
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
@@ -79,8 +84,9 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             }
         });
 
+        //TODO Validate images smaller and larger than the default
         Object image = recipe.get("THUMBNAIL");
-        if (image instanceof byte[])
+        if (image instanceof byte[] && ((byte[]) image).length>1)
             recipeImage.setImageBitmap(DbBitmapUtility.getImage((byte[]) image ));
 
         recipeName = (TextView) rootView.findViewById(R.id.recipe_name_label);
@@ -91,9 +97,9 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             recipeName.setText(tempName);
             recipeId = "-1";
         }    else {
-            recipeName.setText(contextIntent.getStringExtra("NAME"));
-            instructions.setText(contextIntent.getStringExtra("INSTRUCTIONS"));
-            this.recipeId = contextIntent.getStringExtra("_id");
+            recipeName.setText((String) recipe.get("NAME"));
+            instructions.setText((String) recipe.get("INSTRUCTIONS"));
+            this.recipeId = contextIntent.getStringExtra("RECIPE_ID");
         }
 
         Log.d("recipeeditor", "Id is " + recipeId);

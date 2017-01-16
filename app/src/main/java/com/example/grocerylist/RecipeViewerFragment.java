@@ -56,7 +56,12 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     startActivityForResult(i, RecipeSearchActivity.ACTIVITY_ID);
                 } else {
                     RecipeListPackager rlp = recipeMap.get(clickDay);
-                    Intent i = rlp.getIntent(getActivity(), RecipeEditorActivity.class);
+                    //Intent i = rlp.getIntent(getActivity(), RecipeEditorActivity.class);
+                    Intent i = new Intent(getActivity(), RecipeEditorActivity.class);
+                    i.putExtra("RECIPE_ID", ""+rlp.get("_id"));
+                    i.putExtra("DAY", clickDay);
+                    i.putExtra("RECIPE_LIST_ID", "" + rlp.get("RECIPE_LIST_ID"));
+
                     startActivityForResult(i, RecipeEditorActivity.ACTIVITY_ID);
                 }
             }
@@ -96,12 +101,12 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     Log.d("result", "OK selected");
                     String recipeListId;
                     if (data.hasExtra("NEW_RECIPE_NAME")) {
-                        RecipeList rl  = new RecipeList(Integer.parseInt(listId), Integer.parseInt(data.getStringExtra("_id")), data.getStringExtra("DAY"));
+                        RecipeList rl  = new RecipeList(Integer.parseInt(listId), Integer.parseInt(data.getStringExtra("RECIPE_ID")), data.getStringExtra("DAY"));
                         recipeListId =  "" + productDatabase.addEntryToDatabase(rl);
                     } else {
                         recipeListId = data.getStringExtra("RECIPE_LIST_ID");
                     }
-                    String recipeId = data.getStringExtra("_id");
+                    String recipeId = data.getStringExtra("RECIPE_ID");
                     productDatabase.deleteIngredientsWithId(recipeListId);
                     // Add ingredients as products to list.
                     addIngredientsToList(recipeId, recipeListId);
