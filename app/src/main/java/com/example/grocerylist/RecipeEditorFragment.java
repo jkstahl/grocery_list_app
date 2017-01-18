@@ -178,7 +178,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     }
 
                     // recipe in db after this point
-                    // TODO get thumbnail into database
+                    // get thumbnail into database
                     if (recipeImageBitmap != null) { // Put thumbnail into the database
                         Log.d("recipeeditor", "Adding thumbnail.");
                         byte[] tempImage = DbBitmapUtility.getBytes(recipeImageBitmap);

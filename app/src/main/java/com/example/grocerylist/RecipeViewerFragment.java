@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 public class RecipeViewerFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor> {
     private RecipeAdderAdapter recipeAdderAdapter;
-    private String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private DaysTracker dayTracker;
     private String listId;
     private ListView recipeList;
     private ProductListDB productDatabase;
@@ -39,23 +40,30 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
         getLoaderManager().restartLoader(0, null, this);
     }
 
+    private void startSearchIntent(String clickDay) {
+        Intent i = new Intent(getActivity(), RecipeSearchActivity.class);
+        i.putExtra("DAY", clickDay);
+        i.putExtra("LIST_ID", "" + listId);
+        startActivityForResult(i, RecipeSearchActivity.ACTIVITY_ID);
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dayTracker = new DaysTracker();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.recipe_adder_layout, container, false);
         recipeList = (ListView) rootView.findViewById(R.id.recipe_adder_list);
+
         recipeList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickDay  = days[position];
-                // TODO Add search for days that already have recipes assigned
+                String clickDay  = dayTracker.getDayFromPosition(position);
+                // Add search for days that already have recipes assigned
                 Map<String, RecipeListPackager> recipeMap = ((RecipeAdderAdapter)recipeList.getAdapter()).getActiveRecipes();
                 if (!recipeMap.containsKey(clickDay)) {
-                    Intent i = new Intent(getActivity(), RecipeSearchActivity.class);
-                    i.putExtra("DAY", clickDay);
-                    i.putExtra("LIST_ID", "" + listId);
-                    startActivityForResult(i, RecipeSearchActivity.ACTIVITY_ID);
+                    startSearchIntent(clickDay);
                 } else {
                     RecipeListPackager rlp = recipeMap.get(clickDay);
                     //Intent i = rlp.getIntent(getActivity(), RecipeEditorActivity.class);
@@ -68,6 +76,9 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 }
             }
         });
+
+
+
         listId = getActivity().getIntent().getStringExtra("ListID");
         productDatabase = DatabaseHolder.getDatabase(getActivity());
         getLoaderManager().initLoader(2, null, this);
@@ -186,16 +197,22 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.recipe_list_item, parent, false);
             }
 
-
-            ((TextView) convertView.findViewById(R.id.day_label)).setText(days[position]);
-            RecipeListPackager recipeItem = recipeList.get(days[position]);;
-            if (recipeList.containsKey(days[position])){
-
+            ImageButton searchButton = (ImageButton) convertView.findViewById(R.id.recipe_search);
+            searchButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startSearchIntent(dayTracker.getDayFromPosition(position));
+                }
+            });
+            String dayString = dayTracker.getDayFromPosition(position);
+            ((TextView) convertView.findViewById(R.id.day_label)).setText(dayString);
+            RecipeListPackager recipeItem = recipeList.get(dayTracker.getDayFromPosition(position));
+            if (recipeList.containsKey(dayString)) {
                 ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText((String) recipeItem.get("NAME"));
                 ImageView imageView = (ImageView) convertView.findViewById(R.id.recipe_image);
                 byte[] imageRaw = (byte[])recipeItem.get("THUMBNAIL");
@@ -204,7 +221,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     imageView.setImageBitmap(imageBitmap);
                 }
 
-                Log.d("recipelistitem", "Day: " + days[position] + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));
+                Log.d("recipelistitem", "Day: " + dayString + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));
                 // Delete recipe if there is one there.
                 ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.delete_recipe_button);
                 deleteButton.setTag("" + recipeItem.get("RECIPE_LIST_ID"));
@@ -212,7 +229,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     @Override
                     public void onClick(View v) {
                         String recipeListId = "" + v.getTag();
-                        // TODO Delete all ingredients and list item
+                        // Delete all ingredients and list item
                         deleteRecipeFromList(recipeListId);
                     }
                 });
@@ -225,7 +242,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
 
         @Override
         public int getCount() {
-            return days.length;
+            return dayTracker.getDaysLength();
         }
 
         public Map<String,RecipeListPackager> getActiveRecipes() {

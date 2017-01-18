@@ -22,10 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class ListViewerAddFragment extends Fragment {
 	private ProductListDB productDatabase;
 	private int listId;
 	private ListViewerListFragment listViewer;
+	private final String TAG="listvieweradd";
 
 	protected Fragment createFragment() {
 
@@ -38,10 +40,14 @@ public class ListViewerAddFragment extends Fragment {
 
 	private void addProduct(String newProduct) {
 		Log.d("action", "Done clicked in new item input");
+		// TODO Extract quantity and units from name string
 		// get id of the product
-		//long id = productDatabase.getProductIdByName(newProduct);
+		ProductUnitExtractor pue = new ProductUnitExtractor();
+		ProductUnitExtractor.QuantityUnitPackage qup = pue.getUnitsProductFromString(newProduct);
+		Log.d(TAG, qup.product);
+
 		Log.d("debug", "Product id received " + newProduct);
-		Product newList =  new Product(listId, newProduct, "Uncategorized", 1, "", false);
+		Product newList =  new Product(listId, qup.product, "Uncategorized", (float) qup.quantity, qup.units, false);
 		// add product to the database
 		productDatabase.addEntryToDatabase(newList);
 		listViewer.updateList();

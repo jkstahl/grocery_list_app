@@ -332,7 +332,7 @@ public class ProductListDB extends SQLiteOpenHelper {
         final String[] queryArgs = new String[] { "%" + filterString + "%"};
 
         Cursor reciepeCursor = db.rawQuery("SELECT RECIPES._id, NAME, INSTRUCTIONS, COUNT(RECIPE_LIST._id) AS RECCOUNT, RECIPE_LIST.TIMESTAMP, THUMBNAIL FROM RECIPES LEFT JOIN RECIPE_LIST ON RECIPES._id = RECIPE_LIST.RECIPE_ID WHERE NAME LIKE ? GROUP BY NAME ORDER BY RECCOUNT DESC, RECIPE_LIST.TIMESTAMP DESC", queryArgs);
-        printAll(reciepeCursor);
+        //printAll(reciepeCursor);
         return reciepeCursor;
 
     }

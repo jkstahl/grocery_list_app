@@ -31,7 +31,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 	private ProductListDB productDatabase;
 	private ProductInListAdapter adapter;
 	private String thisID;
-
+	private final String TAG= "listviewer";
 
 	@Override
 	public void onCreate(Bundle sis) {
@@ -40,7 +40,6 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 		Log.d("debug", "created list fragment");
 		thisID = this.getActivity().getIntent().getStringExtra("ListID");
 		productDatabase = DatabaseHolder.getDatabase(getActivity());
-
 		getLoaderManager().initLoader(1, null, this);
 
 	}
@@ -54,8 +53,6 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		this.getListView().setDivider(new ColorDrawable(Color.TRANSPARENT));
-
-
 
 	}
 

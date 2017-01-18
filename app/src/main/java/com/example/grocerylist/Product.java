@@ -11,7 +11,7 @@ public class Product extends TableMap implements TableElement, Serializable {
 	public static final String[] PRODUCT_COLUMNS = {"_id", "NAME", "TYPE", "LIST_ID", "QUANTITY", "UNITS", "CHECK_OUT", "RECIPE_LIST_ID", "TIMESTAMP"};
 	public static final String[] PRODUCT_COLUMN_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "INTEGER", "REAL", "TEXT", "BOOLEAN", "INTEGER", "INTEGER"};
 
-	public Product(Integer listId, String name, String type, Integer quantity, String units, Boolean checkOut) {
+	public Product(Integer listId, String name, String type, float quantity, String units, Boolean checkOut) {
 		this();
 		put("NAME", name);
 		put("TYPE", type);
