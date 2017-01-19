@@ -40,7 +40,7 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
                 });
 
         final ActionBar actionBar = getActionBar();
-
+        setTitle(getIntent().getStringExtra("LIST_NAME"));
 
         // Specify that tabs should be displayed in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -236,10 +237,12 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 ImageView imageView = (ImageView) convertView.findViewById(R.id.recipe_image);
                 byte[] imageRaw = (byte[])recipeItem.get("THUMBNAIL");
                 if (imageRaw != null && imageRaw.length > 1) {
+                    // TODO why is bitmap rotated.
                     Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
-                    imageView.setImageBitmap(imageBitmap);
+                    imageView.setImageBitmap(ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT));
                 } else {
                     // TODO find default image when none was selected.
+
                 }
 
                 Log.d("recipelistitem", "Day: " + dayString + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));

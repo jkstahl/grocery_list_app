@@ -129,7 +129,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
-                Bitmap thumbNail = ThumbnailUtils.extractThumbnail(bitmap, 300, 200);
+                Bitmap thumbNail = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
                 ImageView imageView = (ImageView) getActivity().findViewById(R.id.recipe_image);
                 imageView.setImageBitmap(thumbNail);
                 recipeImageBitmap = thumbNail;

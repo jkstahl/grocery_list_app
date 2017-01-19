@@ -95,8 +95,9 @@ public class GListFragment extends ListFragment implements LoaderManager.LoaderC
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d("management", "Clicked Item " + position);
 		String listID = "" + ((GListCursorWrapper) l.getAdapter().getItem(position)).getGList().get("_id");
+		String listName = "" + ((GListCursorWrapper) l.getAdapter().getItem(position)).getGList().get("NAME");
 		Log.d("management", "ID is " + listID);
-		openList(listID);
+		openList(listID, listName);
 		//DatabaseHolder.getDatabase(getActivity()).getProductsFromList(glist)
 		
 	}
@@ -115,14 +116,14 @@ public class GListFragment extends ListFragment implements LoaderManager.LoaderC
 			case R.id.add_list:
 				Log.d("AddListSelect", "Add a List selected.");
 
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 				Date date = new Date();
 				String curDate = dateFormat.format(date);
 				Log.d("AddListSelect", curDate);
 				long rowId = productDatabase.addEntryToDatabase(new GList(curDate));
 				Log.d("AddListSelect", productDatabase.getLists().toString());
 				updateList();
-				openList("" + rowId);
+				openList("" + rowId, curDate);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -139,9 +140,10 @@ public class GListFragment extends ListFragment implements LoaderManager.LoaderC
 
 	}
 
-	public void openList(String rowId) {
+	public void openList(String rowId, String listName) {
 		Intent i = new Intent(getActivity(), SwipeMainScreen.class);
 		i.putExtra("ListID", rowId);
+		i.putExtra("LIST_NAME", listName);
 		startActivity(i);
 	}
 

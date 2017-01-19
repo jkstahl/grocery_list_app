@@ -11,7 +11,13 @@ import java.io.ByteArrayOutputStream;
 
 public class DbBitmapUtility {
 
-        // convert from bitmap to byte array
+    public static int IMAGE_HIEGHT=1000;
+    public static int IMAGE_WIDTH=1000;
+
+    public static int THUMBNAIL_HEIGHT=300;
+    public static int THUMBNAIL_WIDTH=300;
+
+    // convert from bitmap to byte array
         public static byte[] getBytes(Bitmap bitmap) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +39,7 @@ import java.util.Map;
 public class RecipeSearchFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  {
     public static final int ACTIVITY_ID = 2;
 
+    private final String TAG="recipesearch";
     private ListView recipeList;
     private EditText recipeSearchBox;
     private ProductListDB productDatabase;
@@ -172,8 +174,10 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
 
             ImageView imageView = (ImageView) view.findViewById(R.id.recipe_image);
             byte[] imageRaw = (byte[])cursor.getBlob(cursor.getColumnIndex("THUMBNAIL"));
+            Log.d(TAG, "Image Size: " + imageRaw.length);
             if (imageRaw != null && imageRaw.length > 1) {
                 Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
+                imageBitmap = ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT);
                 imageView.setImageBitmap(imageBitmap);
             }
         }
