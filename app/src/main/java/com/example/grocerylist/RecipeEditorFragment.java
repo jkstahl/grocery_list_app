@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -43,13 +44,16 @@ import static android.app.Activity.RESULT_OK;
  * Created by neoba on 1/1/2017.
  */
 public class RecipeEditorFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private RecipePackager recipe;
+    private final String TAG="recipeeditor";
+
+    private Recipe recipe;
     private String recipeId;
     private ListView ingredientsList;
     private boolean newRecipe = false;
     private TextView recipeName;
     private int PICK_IMAGE_REQUEST = 1;
     private Bitmap recipeImageBitmap=null;
+    private ProductUnitExtractor unitExtractor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,24 +61,25 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         setHasOptionsMenu(true);
 
         ProductListDB productDatabase = DatabaseHolder.getDatabase(getActivity());
+        unitExtractor = new ProductUnitExtractor();
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.recipe_edit, container, false);
         Intent contextIntent = getActivity().getIntent();
         newRecipe = contextIntent.hasExtra("NEW_RECIPE_NAME");
         if (newRecipe) {
-            recipe = new RecipePackager();
+            recipe = new Recipe();
         } else {
-            recipe = new RecipePackager();
+            recipe = new Recipe();
             Cursor recipeCursor = productDatabase.getRecipeFromId((String) contextIntent.getStringExtra("RECIPE_ID"));
             recipe.setCursorData(recipeCursor);
-            //recipe = new RecipePackager(contextIntent);
+            //recipe = new Recipe(contextIntent);
         }
 
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
         recipeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("recipeeditor", "Image clicked.");
+                Log.d(TAG, "Image clicked.");
                 Intent intent = new Intent();
                 // Show only images, no videos or anything else
                 intent.setType("image/*");
@@ -102,7 +107,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             this.recipeId = contextIntent.getStringExtra("RECIPE_ID");
         }
 
-        Log.d("recipeeditor", "Id is " + recipeId);
+        Log.d(TAG, "Id is " + recipeId);
 
         recipe.setView("NAME", recipeName);
         recipe.setView("INSTRUCTIONS", instructions);
@@ -149,7 +154,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             case R.id.menu_item_ok:
                 Log.d("AddListSelect", "Add a List selected.");
                 if (recipeName.getText().toString().trim().equals("")) {
-                    Log.d("recipeeditor", "Empty name field");
+                    Log.d(TAG, "Empty name field");
                     Toast.makeText(getActivity(), "Recipe name must not be empty", Toast.LENGTH_SHORT).show();
                     recipeName.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -168,11 +173,12 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     productDatabase.deleteIngredientsFromRecipe(recipe);
                     for (Ingredients ing : ingredientList) {
 
+                        // TODO format ingredients unsing unit extractor
                         if (newRecipe) { // put the recipe id in if this is a new recipe becase we just added the recipe.
                             ing.put("RECIPE_ID", recipe.get("_id"));
                             returnIntent.putExtra("_id", "" + recipe.get("_id"));
                         }
-                        Log.d("recipeeditor", "Ingredient added " + ing.get("NAME"));
+                        Log.d(TAG, "Ingredient added " + ing.get("NAME"));
                         productDatabase.addEntryToDatabase(ing);
 
                     }
@@ -180,7 +186,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     // recipe in db after this point
                     // get thumbnail into database
                     if (recipeImageBitmap != null) { // Put thumbnail into the database
-                        Log.d("recipeeditor", "Adding thumbnail.");
+                        Log.d(TAG, "Adding thumbnail.");
                         byte[] tempImage = DbBitmapUtility.getBytes(recipeImageBitmap);
                         recipe.put("THUMBNAIL", tempImage);
                     }
@@ -306,6 +312,18 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                         }
                     });
 
+                    final CheckBox ingredientAdd = (CheckBox) convertView.findViewById(R.id.list_add_checkbox);
+                    ingredientAdd.setOnClickListener(null);
+                    ingredientAdd.setChecked((Boolean) ingredientArrayList.get(position).get("USE_IN_LIST"));
+
+                    ingredientAdd.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "Use in list set to: " + ((CheckBox) v).isChecked());
+                            ingredientArrayList.get(position).put("USE_IN_LIST", ((CheckBox) v).isChecked());
+                        }
+                    });
+
                     break;
                 case EDIT_TYPE:
                     final EditText editName = (EditText)convertView.findViewById(R.id.ingredient_name_edit);
@@ -341,6 +359,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                             }
                         }
                     });
+
                     break;
             }
 
@@ -384,7 +403,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
 
         @Override
         public void afterTextChanged(Editable s) {
-            Log.d("recipeeditor", s.toString() + " was: " + thisIngredients.get("NAME"));
+            Log.d(TAG, s.toString() + " was: " + thisIngredients.get("NAME"));
             thisIngredients.put("NAME", s.toString());
 
         }

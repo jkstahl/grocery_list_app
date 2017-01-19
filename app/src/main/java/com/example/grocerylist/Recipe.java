@@ -1,11 +1,14 @@
 package com.example.grocerylist;
 
-public class Recipe extends TableMap implements TableElement {
+import android.content.ContentValues;
+import android.content.Intent;
+
+public class Recipe extends Packager implements TableElement {
 	// table of recipes
 	public static final String TABLE_RECIPE = "RECIPES";
 	public static final String[] RECIPE_COLUMNS = {"_id", "NAME", "INSTRUCTIONS", "THUMBNAIL",  "TIMESTAMP"};
 	public static final String[] RECIPE_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "BLOB", "INTEGER"};
-	
+
 	public Recipe(String name, String instructions) {
 		this();
 		put("NAME", name);
@@ -16,7 +19,15 @@ public class Recipe extends TableMap implements TableElement {
 	public Recipe() {
 		super();
 	}
-	
+
+	public Recipe(ContentValues dataValues) {
+		super(dataValues);
+	}
+
+	public Recipe(Intent intent) {
+		super(intent);
+	}
+
 	@Override
 	public String getTableName() {
 		return TABLE_RECIPE;

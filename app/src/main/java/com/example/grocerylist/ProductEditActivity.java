@@ -21,7 +21,7 @@ public class ProductEditActivity extends Activity {
     private Spinner productUnits;
     private EditText productType;
     private String id;
-    ProductPackager pp;
+    Product pp;
     public static final String[] unitTypes = {"", "ounces", "pounds", "cups", "quarts", "liters"};
 
     @Override
@@ -30,7 +30,7 @@ public class ProductEditActivity extends Activity {
         setContentView(R.layout.edit_product);
 
         Intent inputIntent = getIntent();
-        pp = new ProductPackager(inputIntent);
+        pp = new Product(inputIntent);
         productName = ((EditText) findViewById(R.id.product_name_view));
         productName.setText(inputIntent.getStringExtra("NAME"));
 

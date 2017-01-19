@@ -1,10 +1,12 @@
 package com.example.grocerylist;
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.Serializable;
 
-public class Product extends TableMap implements TableElement, Serializable {
+public class Product extends Packager implements TableElement, Serializable {
 
 	// table of all products
 	public static final String TABLE_PRODUCTS = "PRODUCTS";
@@ -24,10 +26,18 @@ public class Product extends TableMap implements TableElement, Serializable {
 
 	public Product() {super();}
 
-	public Product(int i, String ingredientName, String uncategorized, int i1, String s, boolean b, String recipeId) {
+	public Product(int i, String ingredientName, String uncategorized, float i1, String s, boolean b, String recipeId) {
 		this(i, ingredientName, uncategorized, i1, s, b);
 		Log.d("product", "Recipe list id is " + recipeId);
 		put("RECIPE_LIST_ID", Integer.parseInt(recipeId));
+	}
+
+	public Product(ContentValues dataValues) {
+		super(dataValues);
+	}
+
+	public Product(Intent intent) {
+		super(intent);
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 12;
+	public static final int DATABASE_VERSION = 13;
     // TODO If we update add new columns and tables if needed to database.
 	
 	public ProductListDB(Context context) {
@@ -341,7 +341,7 @@ public class ProductListDB extends SQLiteOpenHelper {
         Log.d("database", "Creating recipe list cursor");
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor recipeCursor = db.query(Ingredients.TABLE_PRODUCTS,
-                new String[]{"INGREDIENTS._id", "RECIPE_ID", "INGREDIENTS.NAME", "QUANTITY", "UNITS"},
+                new String[]{"INGREDIENTS._id", "RECIPE_ID", "INGREDIENTS.NAME", "QUANTITY", "UNITS", "USE_IN_LIST"},
                 "INGREDIENTS.RECIPE_ID=" + listId,null, null, null,null);
         //Cursor recipeCursor = db.rawQuery("SELECT INGREDIENTS._id, RECIPE_ID, INGREDIENTS.NAME, QUANTITY, UNITS FROM INGREDIENTS",null); //JOIN RECIPES ON INGREDIENTS.RECIPE_ID=" + listId + "", null);
         this.printAll(recipeCursor);
@@ -378,7 +378,7 @@ public class ProductListDB extends SQLiteOpenHelper {
         Log.d("database", "Deleting " + numDeleted + " records with list id " + recipeListId);
     }
 
-    public void deleteIngredientsFromRecipe(RecipePackager recipe) {
+    public void deleteIngredientsFromRecipe(Recipe recipe) {
         Log.d("database", "Deleting  ingredient with id " + recipe.get("_id"));
         SQLiteDatabase db = this.getWritableDatabase();
         int numDeleted = db.delete(Ingredients.TABLE_PRODUCTS, "RECIPE_ID = " + recipe.get("_id"), null);
@@ -389,7 +389,7 @@ public class ProductListDB extends SQLiteOpenHelper {
         Log.d("database", "Getting recipe with id " + stringExtra);
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor recipeCursor = db.query(Recipe.TABLE_RECIPE,
-                RecipePackager.PRODUCT_COLUMNS,
+                Recipe.RECIPE_COLUMNS,
                 "_id = " + stringExtra, null, null, null, null, null);
         recipeCursor.moveToFirst();
         return recipeCursor;

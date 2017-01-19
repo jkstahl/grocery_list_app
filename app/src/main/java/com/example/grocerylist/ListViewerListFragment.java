@@ -62,7 +62,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 		//Log.d("actions", "ID is " + ((ListOProdsCursorWrapper) l.getAdapter().getItem(position)).getGList().get("_id"));
 		//DatabaseHolder.getDatabase(getActivity()).getProductsFromList(glist)
 		Product wp = (Product) ((WorkingProductCursorWrapper) adapter.getItem(position)).getWorkingProduct();
-		ProductPackager pp = new ProductPackager(wp.getValuesContainer());
+		Product pp = new Product(wp.getValuesContainer());
 		Log.d("actions", "working product name " + ((String)wp.get("NAME")));
 		Intent i = pp.getIntent(getActivity(), ProductEditActivity.class);
 
@@ -79,7 +79,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 			case (ProductEditActivity.ACTIVITY_ID) : {
 				if (resultCode == ProductEditActivity.OK) {
 					Log.d("return", "Returned from Product edit activity with OK to change.");
-					ProductPackager pp = new ProductPackager(data);
+					Product pp = new Product(data);
 					ContentValues cv = pp.getValuesContainer();
 					productDatabase.updateTable(Product.TABLE_PRODUCTS, cv, "" + cv.get("_id"));
 					updateList();

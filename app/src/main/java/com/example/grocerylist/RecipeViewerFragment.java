@@ -35,15 +35,18 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
     private ListView recipeList;
     private ProductListDB productDatabase;
     private OnRefreshCallback callbackRefresh;
+    private ProductUnitExtractor unitExtractor;
+    private final String TAG = "recipeviewer";
 
     private void refreshRecipeList() {
         getLoaderManager().restartLoader(0, null, this);
     }
 
-    private void startSearchIntent(String clickDay) {
+    private void startSearchIntent(String clickDay, String recipeListId) {
         Intent i = new Intent(getActivity(), RecipeSearchActivity.class);
         i.putExtra("DAY", clickDay);
         i.putExtra("LIST_ID", "" + listId);
+        i.putExtra("RECIPE_LIST_ID", recipeListId);
         startActivityForResult(i, RecipeSearchActivity.ACTIVITY_ID);
     }
 
@@ -51,6 +54,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        unitExtractor = new ProductUnitExtractor();
         dayTracker = new DaysTracker();
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.recipe_adder_layout, container, false);
         recipeList = (ListView) rootView.findViewById(R.id.recipe_adder_list);
@@ -63,15 +67,15 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 // Add search for days that already have recipes assigned
                 Map<String, RecipeListPackager> recipeMap = ((RecipeAdderAdapter)recipeList.getAdapter()).getActiveRecipes();
                 if (!recipeMap.containsKey(clickDay)) {
-                    startSearchIntent(clickDay);
+                    startSearchIntent(clickDay, "" + (Integer) recipeMap.get(clickDay).get("RECIPE_LIST_ID"));
                 } else {
                     RecipeListPackager rlp = recipeMap.get(clickDay);
                     //Intent i = rlp.getIntent(getActivity(), RecipeEditorActivity.class);
                     Intent i = new Intent(getActivity(), RecipeEditorActivity.class);
                     i.putExtra("RECIPE_ID", ""+rlp.get("_id"));
                     i.putExtra("DAY", clickDay);
-                    i.putExtra("RECIPE_LIST_ID", "" + rlp.get("RECIPE_LIST_ID"));
-
+                    i.putExtra("RECIPE_LIST_ID", "-1");
+                    Log.d(TAG, "Sending Recipe list ID: " + rlp.get("RECIPE_LIST_ID"));
                     startActivityForResult(i, RecipeEditorActivity.ACTIVITY_ID);
                 }
             }
@@ -92,13 +96,17 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
         switch (requestCode) {
             case RecipeSearchActivity.ACTIVITY_ID:
                 if (resultCode == RecipeSearchActivity.OK) {
+                    // Delete old ingredients if this is a selected recipe
                     String recipeId = data.getStringExtra("RECIPE_ID");
                     String day = data.getStringExtra("DAY");
                     RecipeList rp = new RecipeList(Integer.parseInt(listId), Integer.parseInt(recipeId), day);
                     String newRecipeListId = "" + productDatabase.addEntryToDatabase(rp);
                     // Add ingredients to the grocery list.
+                    String recipeListId = data.getStringExtra("RECIPE_LIST_ID");
+                    Log.d(TAG, "Recieved list id: " + recipeListId);
+                    productDatabase.deleteIngredientsWithId(recipeListId);
+                    callbackRefresh.refreshProductList();
                     addIngredientsToList(recipeId, newRecipeListId);
-
                     refreshRecipeList();
                 } else if (resultCode == RecipeSearchActivity.NEW) {
                     // Add new creation functionality.
@@ -137,10 +145,17 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
         if (ingredientForRecipeCursor.moveToFirst()) {
             Log.d("ingredientsadd", "Found ingredients for recipe " + recipeId + ". Adding to list.");
             do {
-                String ingredientName = ingredientForRecipeCursor.getString(ingredientForRecipeCursor.getColumnIndex("NAME"));
-                Log.d("ingredientsadd", "Adding " + ingredientName + " to list.");
-                Product newProduct = new Product( Integer.parseInt(listId),ingredientName, "Uncategorized", 1, "", false, recipeListId);
-                productDatabase.addEntryToDatabase(newProduct);
+                int useInList = (int) ingredientForRecipeCursor.getInt(ingredientForRecipeCursor.getColumnIndex("USE_IN_LIST"));
+                if (useInList != 0) {
+                    String ingredientName = ingredientForRecipeCursor.getString(ingredientForRecipeCursor.getColumnIndex("NAME"));
+
+                    Log.d("ingredientsadd", "Adding " + ingredientName + " to list.");
+
+                    ProductUnitExtractor.QuantityUnitPackage formattedProoduct = unitExtractor.getUnitsProductFromString(ingredientName);
+                    // TODO figure out category
+                    Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+                    productDatabase.addEntryToDatabase(newProduct);
+                }
             } while (ingredientForRecipeCursor.moveToNext());
             callbackRefresh.refreshProductList();
         }
@@ -206,7 +221,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
             searchButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startSearchIntent(dayTracker.getDayFromPosition(position));
+                    startSearchIntent(dayTracker.getDayFromPosition(position), ""+ recipeList.get(dayTracker.getDayFromPosition(position)).get("RECIPE_LIST_ID"));
                 }
             });
             String dayString = dayTracker.getDayFromPosition(position);

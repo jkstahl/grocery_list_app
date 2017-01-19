@@ -83,5 +83,13 @@ public class ProductUnitExtractorTest {
         assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("cherry coke", 6, defaultUnit), pue.getUnitsProductFromString("six cherry coke"));
     }
 
+    @Test
+    public void testCaseFractions() throws Exception {
+        ProductUnitExtractor pue = new ProductUnitExtractor();
+        //ProductUnitExtractor.QuantityUnitPackage qup = pue.getUnitsProductFromString("one carrot");
+        String defaultUnit = "";
+        assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("sugar", .25, "cup"), pue.getUnitsProductFromString("1/4 cups of sugar"));
+        assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("carrot", .5, defaultUnit), pue.getUnitsProductFromString("1 / 2  carrot"));
+    }
 
 }
