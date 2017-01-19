@@ -21,6 +21,7 @@ public class Product extends Packager implements TableElement, Serializable {
 		put("QUANTITY", quantity);
 		put("UNITS", units);
 		put("CHECK_OUT", checkOut);
+		put("RECIPE_LIST_ID", -1);
 		put("TIMESTAMP", 10);
 	}
 

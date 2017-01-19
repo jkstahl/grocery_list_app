@@ -17,7 +17,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 13;
+	public static final int DATABASE_VERSION = 20;
     // TODO If we update add new columns and tables if needed to database.
 	
 	public ProductListDB(Context context) {
@@ -78,7 +78,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
         //List<Product> tempProds = productDatabase.getProducts();
         for (int i=0; i<numProducts; i++) {
-            Product newList = new Product((Integer) tempList.get(r.nextInt(numLists)).get("_id"), "My product " + (r.nextInt(numProducts) + 1), "Unknown", i, "", false);
+            Product newList = new Product((Integer) tempList.get(r.nextInt(numLists)).get("_id"), "My product " + (r.nextInt(numProducts) + 1), "Unknown", i, "-1", false);
             addEntryToDatabase(newList, productDatabase);
 
         }

@@ -67,14 +67,18 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 // Add search for days that already have recipes assigned
                 Map<String, RecipeListPackager> recipeMap = ((RecipeAdderAdapter)recipeList.getAdapter()).getActiveRecipes();
                 if (!recipeMap.containsKey(clickDay)) {
-                    startSearchIntent(clickDay, "" + (Integer) recipeMap.get(clickDay).get("RECIPE_LIST_ID"));
+                    RecipeListPackager rlp = recipeMap.get(clickDay);
+                    if (rlp == null)
+                        startSearchIntent(clickDay, null);
+                    else
+                        startSearchIntent(clickDay, "" + rlp.get("RECIPE_LIST_ID"));
                 } else {
                     RecipeListPackager rlp = recipeMap.get(clickDay);
                     //Intent i = rlp.getIntent(getActivity(), RecipeEditorActivity.class);
                     Intent i = new Intent(getActivity(), RecipeEditorActivity.class);
                     i.putExtra("RECIPE_ID", ""+rlp.get("_id"));
                     i.putExtra("DAY", clickDay);
-                    i.putExtra("RECIPE_LIST_ID", "-1");
+                    i.putExtra("RECIPE_LIST_ID", (String) "" + rlp.get("RECIPE_LIST_ID"));
                     Log.d(TAG, "Sending Recipe list ID: " + rlp.get("RECIPE_LIST_ID"));
                     startActivityForResult(i, RecipeEditorActivity.ACTIVITY_ID);
                 }
@@ -234,6 +238,8 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 if (imageRaw != null && imageRaw.length > 1) {
                     Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
                     imageView.setImageBitmap(imageBitmap);
+                } else {
+                    // TODO find default image when none was selected.
                 }
 
                 Log.d("recipelistitem", "Day: " + dayString + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));
