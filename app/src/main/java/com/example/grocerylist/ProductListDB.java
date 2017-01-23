@@ -394,4 +394,11 @@ public class ProductListDB extends SQLiteOpenHelper {
         recipeCursor.moveToFirst();
         return recipeCursor;
     }
+
+    public void deleteMultipleProducts(String whereString) {
+        Log.d("database", "Deleting  ingredient with id " + whereString);
+        SQLiteDatabase db = this.getWritableDatabase();
+        int numDeleted = db.delete(Product.TABLE_PRODUCTS, whereString, null);
+        Log.d("database", "Deleting " + numDeleted);
+    }
 }

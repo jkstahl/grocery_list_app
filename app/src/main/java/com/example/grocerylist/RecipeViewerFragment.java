@@ -226,7 +226,11 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
             searchButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startSearchIntent(dayTracker.getDayFromPosition(position), ""+ recipeList.get(dayTracker.getDayFromPosition(position)).get("RECIPE_LIST_ID"));
+                    RecipeListPackager rlp = recipeList.get(dayTracker.getDayFromPosition(position));
+                    if (rlp != null)
+                        startSearchIntent(dayTracker.getDayFromPosition(position), ""+ rlp.get("RECIPE_LIST_ID"));
+                    else
+                        startSearchIntent(dayTracker.getDayFromPosition(position), null);
                 }
             });
             String dayString = dayTracker.getDayFromPosition(position);
@@ -236,14 +240,11 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText((String) recipeItem.get("NAME"));
                 ImageView imageView = (ImageView) convertView.findViewById(R.id.recipe_image);
                 byte[] imageRaw = (byte[])recipeItem.get("THUMBNAIL");
-                if (imageRaw != null && imageRaw.length > 1) {
+                //if (imageRaw != null && imageRaw.length > 1) {
                     // TODO why is bitmap rotated.
-                    Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
+                    Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
                     imageView.setImageBitmap(ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT));
-                } else {
-                    // TODO find default image when none was selected.
 
-                }
 
                 Log.d("recipelistitem", "Day: " + dayString + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));
                 // Delete recipe if there is one there.

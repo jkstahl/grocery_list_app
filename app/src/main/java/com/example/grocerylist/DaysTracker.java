@@ -12,8 +12,12 @@ public class DaysTracker {
     public String getDayFromPosition(int position) {
         //TODO make days of the week relative to current
         Calendar c = Calendar.getInstance();
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        return days[(position + dayOfWeek) % days.length];
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK)-1;
+
+
+        //int shiftedPosition = position - dayOfWeek;
+        //return days[ shiftedPosition < 0 ? shiftedPosition + days.length : shiftedPosition];
+        return days[(dayOfWeek + position) % days.length];
     }
 
     public int getDaysLength() {

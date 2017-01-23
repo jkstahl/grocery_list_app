@@ -175,11 +175,11 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
             ImageView imageView = (ImageView) view.findViewById(R.id.recipe_image);
             byte[] imageRaw = (byte[])cursor.getBlob(cursor.getColumnIndex("THUMBNAIL"));
             Log.d(TAG, "Image Size: " + imageRaw.length);
-            if (imageRaw != null && imageRaw.length > 1) {
-                Bitmap imageBitmap = DbBitmapUtility.getImage(imageRaw);
+            //if (imageRaw != null && imageRaw.length > 1) {
+                Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
                 imageBitmap = ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT);
                 imageView.setImageBitmap(imageBitmap);
-            }
+
         }
 
 

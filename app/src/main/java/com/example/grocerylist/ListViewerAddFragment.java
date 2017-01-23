@@ -93,6 +93,7 @@ public class ListViewerAddFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Log.d("addnewtext", "clicked " + addNewItemTextView.getText().toString());
 				addProduct(addNewItemTextView.getText().toString());
+				addNewItemTextView.setText("");
 			}
 		});
 

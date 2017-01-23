@@ -5,35 +5,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <ImageView
+        android:src="@drawable/ic_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:id="@+id/recipe_image" />
     <EditText
         android:text="Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/recipe_name_label"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textSize="24sp"
         android:background="@android:color/transparent"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <ImageView
-        android:src="@drawable/ic_launcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/recipe_name_label"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:id="@+id/recipe_image" />
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/recipe_image"
+        />
 
     <TextView
         android:text="Ingredients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/recipe_image"
+        android:layout_below="@id/recipe_name_label"
         android:layout_alignParentLeft="true"
-        android:id="@+id/textView3" />
+        android:id="@+id/textView3"
+        />
 
     <com.example.grocerylist.NonScrollListView
         android:layout_width="match_parent"

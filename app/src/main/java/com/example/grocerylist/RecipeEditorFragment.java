@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -91,8 +92,8 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
 
         //TODO Validate images smaller and larger than the default
         Object image = recipe.get("THUMBNAIL");
-        if (image instanceof byte[] && ((byte[]) image).length>1)
-            recipeImage.setImageBitmap(DbBitmapUtility.getImage((byte[]) image ));
+        //if (image instanceof byte[] && ((byte[]) image).length>1)
+            recipeImage.setImageBitmap(DbBitmapUtility.getImage(getActivity(), (byte[]) image ));
 
         recipeName = (TextView) rootView.findViewById(R.id.recipe_name_label);
         EditText instructions = (EditText) rootView.findViewById(R.id.edit_instructions);
@@ -127,9 +128,13 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             Uri uri = data.getData();
 
             try {
+                String path = uri.getPath();
+                Log.d(TAG, "Image path: " + path);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+
                 // Log.d(TAG, String.valueOf(bitmap));
                 Bitmap thumbNail = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
+                //thumbNail = DbBitmapUtility.getBitmap(thumbNail, path);
                 ImageView imageView = (ImageView) getActivity().findViewById(R.id.recipe_image);
                 imageView.setImageBitmap(thumbNail);
                 recipeImageBitmap = thumbNail;
