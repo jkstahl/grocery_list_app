@@ -76,7 +76,6 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 			@Override
 			public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
-				// TODO Auto-generated method stub
 
 				Log.d(TAG, "Action Item Clicked.");
 				switch (arg1.getItemId()) {
@@ -255,9 +254,16 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 			TextView tv = (TextView) view.findViewById(R.id.g_list_name);
 			tv.setText((String) wp.get("NAME"));
 			tv = (TextView) view.findViewById(R.id.text_listi_quantity);
-			tv.setText("" + wp.get("QUANTITY"));
-			tv = (TextView) view.findViewById(R.id.text_listi_units);
-			tv.setText("" + wp.get("UNITS"));
+			float quantity = (Float) wp.get("QUANTITY");
+			String units = (String) wp.get("UNITS");
+			TextView unitsView = (TextView) view.findViewById(R.id.text_listi_units);
+			if (quantity == 1 && (units.equals("each") || units.equals(""))) {
+				tv.setText("");
+				unitsView.setText("");
+			} else {
+				tv.setText("" + quantity);
+				unitsView.setText(units);
+			}
 
 			CheckBox cb = (CheckBox) view.findViewById(R.id.check_out_box);
 			Log.d("management", "checkout id " + wp.get("_id") + " is " + wp.get("CHECK_OUT"));

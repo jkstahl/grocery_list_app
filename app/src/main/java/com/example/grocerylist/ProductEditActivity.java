@@ -22,7 +22,7 @@ public class ProductEditActivity extends Activity {
     private EditText productType;
     private String id;
     ProductPackager pp;
-    public static final String[] unitTypes = {"", "ounces", "pounds", "cups", "quarts", "liters"};
+    public static String[] unitTypes = {"", "ounces", "pounds", "cups", "quarts", "liters"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,7 @@ public class ProductEditActivity extends Activity {
         productQuantity.setText("" + inputIntent.getStringExtra("QUANTITY"));
 
         productUnits = ((Spinner) findViewById(R.id.selector_pedit_units));
+        unitTypes = ProductUnitExtractor.getAllUnits();
         ArrayAdapter<String> adp2=new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, unitTypes);
         productUnits.setAdapter(adp2);
         for (int i=0; i<unitTypes.length; i++)

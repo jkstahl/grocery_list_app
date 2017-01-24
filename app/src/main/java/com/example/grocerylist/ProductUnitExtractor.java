@@ -19,7 +19,7 @@ public class ProductUnitExtractor {
     private Pattern fractionParser;
     private Pattern numberWordParserSearch;
     private Pattern quantityProductPattern;
-    private String[] unitsUsable;
+    private static String[] unitsUsable;
     private String[] unitsNotUsable;
     private Pattern quantityUnitsPattern;
     private Map<String, Integer> wordToNumberMap;
@@ -135,6 +135,10 @@ public class ProductUnitExtractor {
         quantityUnitsPattern = Pattern.compile(quantityUnitsString);
         String quantityProductString = "^(?i)(" + numberRegex +")\\s+([a-zA-Z. ]+)";
         quantityProductPattern = Pattern.compile(quantityProductString);
+    }
+
+    public static String[] getAllUnits() {
+        return unitsUsable;
     }
 
     private String join(String[] array, String joinString) {

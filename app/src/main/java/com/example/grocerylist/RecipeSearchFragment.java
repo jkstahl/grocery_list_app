@@ -159,7 +159,7 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
         @Override
         public View newView (Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.recipe_list_item, parent, false);
+            View view = inflater.inflate(R.layout.recipe_search_list_item, parent, false);
 
 
 
@@ -175,11 +175,10 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
             ImageView imageView = (ImageView) view.findViewById(R.id.recipe_image);
             byte[] imageRaw = (byte[])cursor.getBlob(cursor.getColumnIndex("THUMBNAIL"));
             Log.d(TAG, "Image Size: " + imageRaw.length);
-            //if (imageRaw != null && imageRaw.length > 1) {
-                Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
-                imageBitmap = ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT);
-                imageView.setImageBitmap(imageBitmap);
 
+            Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
+            imageBitmap = ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT);
+            imageView.setImageBitmap(imageBitmap);
         }
 
 

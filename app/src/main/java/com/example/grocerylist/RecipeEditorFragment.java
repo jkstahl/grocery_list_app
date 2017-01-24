@@ -93,7 +93,9 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         //TODO Validate images smaller and larger than the default
         Object image = recipe.get("THUMBNAIL");
         //if (image instanceof byte[] && ((byte[]) image).length>1)
-            recipeImage.setImageBitmap(DbBitmapUtility.getImage(getActivity(), (byte[]) image ));
+        if (image instanceof String)
+            image = new byte[1];
+        recipeImage.setImageBitmap(DbBitmapUtility.getImage(getActivity(), (byte[]) image ));
 
         recipeName = (TextView) rootView.findViewById(R.id.recipe_name_label);
         EditText instructions = (EditText) rootView.findViewById(R.id.edit_instructions);

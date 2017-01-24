@@ -15,36 +15,51 @@
        	android:layout_alignParentTop="true"
 		/>
 
-    <TextView
-        android:id="@+id/g_list_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/check_out_box"
-		android:focusable="false"
-		android:textSize="18sp">
-
-    </TextView>
-
 	<TextView
-        android:id="@+id/text_listi_units"
+        android:id="@+id/g_list_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:text="TextView"
-		android:layout_alignBottom="@+id/g_list_name"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentEnd="true"
-		android:layout_alignTop="@+id/g_list_name" />
+		android:focusable="false"
+        android:textSize="18sp"
+        android:text="Name"
+		android:layout_alignBaseline="@+id/check_out_box"
+		android:layout_alignBottom="@+id/check_out_box"
+		android:layout_toRightOf="@+id/check_out_box"
+		android:layout_marginLeft="29dp"
+		android:layout_marginStart="29dp">
+
+    </TextView>
 
 	<TextView
         android:id="@+id/text_listi_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 		android:text="Quantity"
-		android:layout_marginRight="10dp"
-		android:layout_marginEnd="10dp"
-		android:layout_alignTop="@+id/g_list_name"
-		android:layout_toLeftOf="@+id/text_listi_units"
-		android:layout_toStartOf="@+id/text_listi_units" />
+		android:layout_alignBottom="@+id/g_list_name"
+		android:layout_toRightOf="@+id/g_list_name"
+		android:layout_toEndOf="@+id/g_list_name"
+		android:layout_marginLeft="18dp"
+		android:layout_marginStart="18dp" />
+
+	<TextView
+        android:id="@+id/text_listi_units"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:text="TextView"
+		android:layout_alignBaseline="@+id/text_listi_quantity"
+		android:layout_alignBottom="@+id/text_listi_quantity"
+		android:layout_toRightOf="@+id/text_listi_quantity"
+		android:layout_toEndOf="@+id/text_listi_quantity"
+		android:layout_marginLeft="10dp"
+		android:layout_marginStart="10dp" />
+
+	<TextView
+		android:text="TextView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@+id/text_listi_units"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
+		android:id="@+id/recipe_name_view" />
 
 </RelativeLayout>
