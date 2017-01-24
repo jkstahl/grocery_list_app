@@ -236,19 +236,25 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
             String dayString = dayTracker.getDayFromPosition(position);
             ((TextView) convertView.findViewById(R.id.day_label)).setText(dayString);
             RecipeListPackager recipeItem = recipeList.get(dayTracker.getDayFromPosition(position));
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.recipe_image);
+            ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.delete_recipe_button);
+
             if (recipeList.containsKey(dayString)) {
+                imageView.setVisibility(ImageView.VISIBLE);
+                deleteButton.setVisibility(Button.VISIBLE);
+                searchButton.setVisibility(Button.VISIBLE);
                 ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText((String) recipeItem.get("NAME"));
-                ImageView imageView = (ImageView) convertView.findViewById(R.id.recipe_image);
+
                 byte[] imageRaw = (byte[])recipeItem.get("THUMBNAIL");
                 //if (imageRaw != null && imageRaw.length > 1) {
-                    // TODO why is bitmap rotated.
-                    Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
-                    imageView.setImageBitmap(ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT));
+                // TODO why is bitmap rotated.
+                Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
+                imageView.setImageBitmap(ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT));
 
 
                 Log.d("recipelistitem", "Day: " + dayString + " Item: " + recipeItem.get("NAME") + " ID: " + recipeItem.get("RECIPE_LIST_ID"));
                 // Delete recipe if there is one there.
-                ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.delete_recipe_button);
+
                 deleteButton.setTag("" + recipeItem.get("RECIPE_LIST_ID"));
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -260,6 +266,9 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                 });
             } else {
                 ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText("[None]");
+                imageView.setVisibility(ImageView.INVISIBLE);
+                deleteButton.setVisibility(Button.INVISIBLE);
+                searchButton.setVisibility(Button.INVISIBLE);
             }
 
                 return convertView;
