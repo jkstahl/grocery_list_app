@@ -26,8 +26,8 @@
 		android:layout_alignBaseline="@+id/check_out_box"
 		android:layout_alignBottom="@+id/check_out_box"
 		android:layout_toRightOf="@+id/check_out_box"
-		android:layout_marginLeft="29dp"
-		android:layout_marginStart="29dp">
+		android:layout_marginLeft="9dp"
+		android:layout_marginStart="9dp">
 
     </TextView>
 

@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -28,6 +31,7 @@ public class ListViewerAddFragment extends Fragment {
 	private int listId;
 	private ListViewerListFragment listViewer;
 	private final String TAG="listvieweradd";
+	private AutoCompleteTextView addNewItemTextView=null;
 
 	protected Fragment createFragment() {
 
@@ -38,9 +42,23 @@ public class ListViewerAddFragment extends Fragment {
 		return listViewer;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d("ItemSelect", Integer.toString(item.getItemId()));
+		switch (item.getItemId()) {
+			case R.id.add_product:
+				String addEditBox=addNewItemTextView.getText().toString();
+				if (!addEditBox.trim().equals("")) {
+					addProduct(addEditBox);
+				}
+				return true;
+		}
+		return false;
+	}
+
 	private void addProduct(String newProduct) {
 		Log.d("action", "Done clicked in new item input");
-		// TODO Extract quantity and units from name string
+		// Extract quantity and units from name string
 		// get id of the product
 		ProductUnitExtractor pue = new ProductUnitExtractor();
 		ProductUnitExtractor.QuantityUnitPackage qup = pue.getUnitsProductFromString(newProduct);
@@ -51,12 +69,21 @@ public class ListViewerAddFragment extends Fragment {
 		// add product to the database
 		productDatabase.addEntryToDatabase(newList);
 		listViewer.updateList();
+		addNewItemTextView.setText("");
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// Inflate the menu items for use in the action bar
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.open_list_activity_menu, menu);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.list_frame_global);
+		setHasOptionsMenu(true);
 		if (savedInstanceState == null) {
 			Log.d("listviewer", "Creating fragment.");
 			//Fragment fragment = getFragmentManager().findFragmentById(R.id.activity_container);
@@ -66,7 +93,7 @@ public class ListViewerAddFragment extends Fragment {
 		ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.list_frame_global, container, false);
 		listId = Integer.parseInt(this.getActivity().getIntent().getStringExtra("ListID"));
 
-		final AutoCompleteTextView addNewItemTextView = (AutoCompleteTextView)rootView.findViewById(R.id.new_item_input);
+		addNewItemTextView = (AutoCompleteTextView)rootView.findViewById(R.id.new_item_input);
 		addNewItemTextView.setAdapter(new AutoCompleteAdapter(getActivity()));
 
 
@@ -80,7 +107,7 @@ public class ListViewerAddFragment extends Fragment {
 					if (!newProductString.trim().equals("")) {
 						addProduct(newProductString);
 					}
-					addNewItemTextView.setText("");
+
 
 					handled = true;
 				}
@@ -93,7 +120,6 @@ public class ListViewerAddFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Log.d("addnewtext", "clicked " + addNewItemTextView.getText().toString());
 				addProduct(addNewItemTextView.getText().toString());
-				addNewItemTextView.setText("");
 			}
 		});
 

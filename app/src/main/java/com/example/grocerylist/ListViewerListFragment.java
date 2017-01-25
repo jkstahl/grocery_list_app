@@ -40,7 +40,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 	@Override
 	public void onCreate(Bundle sis) {
 		super.onCreate(sis);
-		setHasOptionsMenu(true);
+
 		Log.d("debug", "created list fragment");
 		thisID = this.getActivity().getIntent().getStringExtra("ListID");
 		productDatabase = DatabaseHolder.getDatabase(getActivity());
@@ -49,11 +49,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.d(TAG, "Menu Option selected");
-		return true;
-	}
+
 
 	public void updateList() {
 		getLoaderManager().restartLoader(0, null, this);
@@ -173,12 +169,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 		}
 	}
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// Inflate the menu items for use in the action bar
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.main_activity_menu, menu);
-	}
+
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {

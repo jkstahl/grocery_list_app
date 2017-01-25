@@ -46,44 +46,6 @@ public class GListFragment extends ListFragment implements LoaderManager.LoaderC
 		//this.getView().setPadding(3,3,3,3);
 	}
 
-	private void createDummyList() {
-		Random r = new Random();
-
-		int numProducts = 50;
-		int numLists = 10;
-		int numRecipes = 20;
-		int numDays = 7;
-
-		productDatabase.clearAllTables();
-		for (int i=0; i<numLists; i++)
-			productDatabase.addEntryToDatabase(new GList("My List " + (i + 1)));
-
-		//for (int i=0; i<30; i++)
-		//	productDatabase.addEntryToDatabase(new Product("My product " + (i + 1), "Type"));
-		int listId = 3;
-		List<GList> tempList = productDatabase.getLists();
-		//List<Product> tempProds = productDatabase.getProducts();
-		for (int i=0; i<numProducts; i++) {
-			Product newList = new Product((Integer) tempList.get(r.nextInt(numLists)).get("_id"), "My product " + (r.nextInt(numProducts) + 1), "Unknown", i, "", false);
-			productDatabase.addEntryToDatabase(newList);
-
-		}
-		Recipe[] ra = new Recipe[numRecipes];
-		for (int i=0; i<numRecipes; i++) {
-			Recipe re = new Recipe("Recipe " + i, "These are some instructions " + i);
-			ra[i] = re;
-			productDatabase.addEntryToDatabase(re);
-		}
-		String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-		for (int i=0; i<numDays; i++) {
-			for (int j=0; j<12; j++) {
-				RecipeList rl = new RecipeList((Integer) tempList.get(r.nextInt(numLists)).get("_id"), (Integer) ra[r.nextInt(numRecipes)].get("_id"), days[i]);
-				productDatabase.addEntryToDatabase(rl);
-			}
-		}
-
-		//productDatabase.getProductsFromList(tempList.get(3));
-	}
 
 	@Override
 	public void onDestroy() {
@@ -116,7 +78,7 @@ public class GListFragment extends ListFragment implements LoaderManager.LoaderC
 			case R.id.add_list:
 				Log.d("AddListSelect", "Add a List selected.");
 
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+				DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 				Date date = new Date();
 				String curDate = dateFormat.format(date);
 				Log.d("AddListSelect", curDate);
