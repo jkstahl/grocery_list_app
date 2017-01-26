@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 21
+    buildToolsVersion "21.0.0"
     defaultConfig {
         applicationId "com.example.grocerylist"
         minSdkVersion 11
-        targetSdkVersion 17
+        targetSdkVersion 21
     }
     buildTypes {
         release {
@@ -22,6 +22,6 @@ repositories { jcenter() }
 dependencies { testCompile "org.mockito:mockito-android:2.+" }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:21.0.0'
     testCompile 'junit:junit:4.12'
 }
