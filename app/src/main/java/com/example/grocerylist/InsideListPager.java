@@ -40,7 +40,13 @@ public class InsideListPager extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "OBJECT " + (position + 1);
+        switch (position){
+            case 0:
+                return "List";
+            case 1:
+                return "Recipes";
+        }
+        return "None";
     }
 
 

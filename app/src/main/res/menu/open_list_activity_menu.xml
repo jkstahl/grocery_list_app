@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/add_product"
         android:icon="@drawable/ic_add_white_24dp"
         android:title="@string/ic_add_white"
         android:showAsAction="ifRoom" />
+    <item
+        android:title="Rename List"
+        app:showAsAction="never"
+        android:id="@+id/rename_list" />
+    <item android:title="Delete List"
+        android:id="@+id/delete_list" />
 </menu>
