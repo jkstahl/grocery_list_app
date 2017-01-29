@@ -39,6 +39,11 @@
         <activity
             android:name=".RecipeEditorActivity"
             android:label="Recipe Edit"></activity>
+        <activity
+            android:name=".GetStringDialog"
+            android:label=""
+            android:theme="@android:style/Theme.Dialog"></activity>
+
     </application>
 
 </manifest>

@@ -2,9 +2,13 @@ package com.example.grocerylist;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -32,6 +37,8 @@ public class ListViewerAddFragment extends Fragment {
 	private ListViewerListFragment listViewer;
 	private final String TAG="listvieweradd";
 	private AutoCompleteTextView addNewItemTextView=null;
+	String newListName=null;
+
 
 	protected Fragment createFragment() {
 
@@ -52,8 +59,35 @@ public class ListViewerAddFragment extends Fragment {
 					addProduct(addEditBox);
 				}
 				return true;
+			case R.id.rename_list:
+				Intent i = new Intent(getActivity(), GetStringDialog.class);
+				i.putExtra("PROMPT", "Enter new list name");
+				startActivityForResult(i, GetStringDialog.ACTIVITY_ID);
+				return true;
+			case R.id.delete_list:
+				// remove list and prods and recipes
+				productDatabase.removeList(listId);
+				getActivity().finish();
+				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case GetStringDialog.ACTIVITY_ID:
+				if (resultCode == GetStringDialog.RESULT_OK) {
+					String newListName = data.getStringExtra("RETURN_STRING");
+					Log.d(TAG, "New List Name: " + newListName);
+					if (!newListName.trim().equals("")) {
+						productDatabase.updateListName("" + listId, newListName);
+						getActivity().setTitle(newListName);
+					}
+				}
+				break;
+		}
 	}
 
 	private void addProduct(String newProduct) {

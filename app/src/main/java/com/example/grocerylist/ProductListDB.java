@@ -13,28 +13,38 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+
 public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 20;
+	public static final int DATABASE_VERSION = 22;
+    private List<TableMap> tables;
+    private final String TAG="database";
     // TODO If we update add new columns and tables if needed to database.
 	
 	public ProductListDB(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		
+		tables = new ArrayList<TableMap>();
+        tables.add(new Product());
+        tables.add(new GList());
+        tables.add(new Recipe());
+        tables.add(new RecipeList());
+        tables.add(new Ingredients());
 	}
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-        db.execSQL((new Product()).getTableCreatString());
-        db.execSQL((new GList()).getTableCreatString());
-        db.execSQL((new Recipe()).getTableCreatString());
-        db.execSQL((new RecipeList()).getTableCreatString());
+        for (TableMap table : tables)
+            db.execSQL(table.getTableCreatString());
+        //db.execSQL((new Product()).getTableCreatString());
+        //db.execSQL((new GList()).getTableCreatString());
+        //db.execSQL((new Recipe()).getTableCreatString());
+        //db.execSQL((new RecipeList()).getTableCreatString());
         //db.execSQL((new ListOProducts()).getTableCreatString());
-        db.execSQL((new RecipeOProducts()).getTableCreatString());
-        db.execSQL((new Ingredients()).getTableCreatString());
-        createDummyList(db);
+        //db.execSQL((new RecipeOProducts()).getTableCreatString());
+        //db.execSQL((new Ingredients()).getTableCreatString());
+        //createDummyList(db);
 	}
 	
 	@Override
@@ -42,18 +52,86 @@ public class ProductListDB extends SQLiteOpenHelper {
 		Log.d("management", "Upgrading database.");
 		
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + Product.TABLE_PRODUCTS);
-        db.execSQL("DROP TABLE IF EXISTS " + GList.TABLE_LIST);
+        //db.execSQL("DROP TABLE IF EXISTS " + Product.TABLE_PRODUCTS);
+        //db.execSQL("DROP TABLE IF EXISTS " + GList.TABLE_LIST);
         //db.execSQL("DROP TABLE IF EXISTS " + ListOProducts.TABLE_LIST_OF_PRODUCTS);
-        db.execSQL("DROP TABLE IF EXISTS " + RecipeOProducts.TABLE_RECIPE_PRODUCTS);
-        db.execSQL("DROP TABLE IF EXISTS " + Recipe.TABLE_RECIPE);
-        db.execSQL("DROP TABLE IF EXISTS " + RecipeList.RECIPE_LIST_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + Ingredients.TABLE_PRODUCTS);
+        //db.execSQL("DROP TABLE IF EXISTS " + RecipeOProducts.TABLE_RECIPE_PRODUCTS);
+        //db.execSQL("DROP TABLE IF EXISTS " + Recipe.TABLE_RECIPE);
+        //db.execSQL("DROP TABLE IF EXISTS " + RecipeList.RECIPE_LIST_TABLE);
+        //db.execSQL("DROP TABLE IF EXISTS " + Ingredients.TABLE_PRODUCTS);
 
         // Create tables again
-        onCreate(db);
+        //onCreate(db);
+        Cursor c = db.rawQuery("SELECT * FROM sqlite_master WHERE type='table'", null);
+        List<String> tableNames = new ArrayList<String>();
+        if (c.moveToFirst()) {
+            while ( !c.isAfterLast() ) {
+                String tableName = c.getString(c.getColumnIndex("name"));
+                Log.d(TAG, "Found table: " + tableName);
+                tableNames.add(tableName);
+                boolean inTableList = false;
+                TableMap updateTable = null;
+                for (TableMap table : tables) {
+                    if (table.getTableName().equals(tableName)) {
+                        updateTable = table;
+                        inTableList = true;
+                    }
+                }
+
+                if (inTableList) {
+                    Log.d(TAG, "Found table in list");
+                    checkTableFields(db, tableName, updateTable);
+                } else {
+                    String type = c.getString(c.getColumnIndex("type"));
+                    int rootPage = c.getInt(c.getColumnIndex("rootpage"));
+                    String sql = c.getString(c.getColumnIndex("sql"));
+                    //if (rootPage != 3)
+                    // Table does not exist in our data strictures.  Remove.
+                    //    db.execSQL("DROP TABLE IF EXISTS " + tableName);
+                }
+                c.moveToNext();
+            }
+        }
+        c.close();
+
+        // check database for all definition tables and if it doesn't exist create.
+        for (TableMap table: tables) {
+            String defTableName = table.getTableName();
+
+            if (!tableNames.contains(defTableName)) {
+                db.execSQL(table.getTableCreatString());
+            }
+        }
 
 	}
+
+    private void checkTableFields(SQLiteDatabase db, String tableName, TableMap updateTable) {
+        Cursor dbCursor = db.query(tableName, null, null, null, null, null, null);
+        List<String> dbColumnNames = new ArrayList<String>(Arrays.asList(dbCursor.getColumnNames()));
+        List<String> defColumnNames = new ArrayList<String>(Arrays.asList(updateTable.getColumns()));
+
+        // check all columns in database and remove if not present
+        for (String colName : dbColumnNames) {
+            if (!defColumnNames.contains(colName)) {
+                Log.d(TAG, "Database table not in the definitions." + colName);
+                //db.execSQL("ALTER TABLE " + tableName + " DROP COLUMN " + colName);
+                // TODO Drop column from table.  Can't use SQL statement to do this.  Need to copy table without column, delete old, copy back.
+            }
+        }
+
+        // check all colums in definitions agains database and add if not present.
+        int i = 0;
+        for (String colName : defColumnNames){
+            if (!dbColumnNames.contains(colName)) {
+                Log.d(TAG, "Column " + colName + " not in database.  Adding.");
+                String addColString = "ALTER TABLE " + tableName + " ADD COLUMN " + colName + " " + updateTable.getColumnTypes()[i];
+                Log.d(TAG, addColString);
+                db.execSQL(addColString);
+            }
+            i++;
+        }
+
+    }
 
 
     private void createDummyList(SQLiteDatabase productDatabase) {
@@ -159,7 +237,7 @@ public class ProductListDB extends SQLiteOpenHelper {
     	//Cursor cursor = db.rawQuery(SQLStatement, null);
     	SQLiteDatabase db = this.getWritableDatabase();
     	Cursor cursor = db.query(Product.TABLE_PRODUCTS,
-    			new String[] {"_id", "LIST_ID","NAME", "TYPE", "QUANTITY", "UNITS", "CHECK_OUT"},
+                new String[] {"_id", "LIST_ID","NAME", "TYPE", "QUANTITY", "UNITS", "CHECK_OUT"},
     			"LIST_ID=" + getID,
     			null, null, null, "CHECK_OUT ASC");
         
@@ -226,11 +304,13 @@ public class ProductListDB extends SQLiteOpenHelper {
 	public void clearAllTables() {
         Log.d("management", "Clearing entried in DB" /*+ SQLStatement*/);
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(Product.TABLE_PRODUCTS, null, null);
-		db.delete(GList.TABLE_LIST, null, null);
-		db.delete(Recipe.TABLE_RECIPE, null, null);
+        for (TableMap table : tables )
+            db.delete(table.getTableName(), null, null);
+		//db.delete(Product.TABLE_PRODUCTS, null, null);
+		//db.delete(GList.TABLE_LIST, null, null);
+		//db.delete(Recipe.TABLE_RECIPE, null, null);
 		//db.delete(ListOProducts.TABLE_LIST_OF_PRODUCTS, null, null);
-		db.delete(RecipeOProducts.TABLE_RECIPE_PRODUCTS, null, null);
+		//db.delete(RecipeOProducts.TABLE_RECIPE_PRODUCTS, null, null);
 		
 		db.close();
 	}
@@ -400,5 +480,22 @@ public class ProductListDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int numDeleted = db.delete(Product.TABLE_PRODUCTS, whereString, null);
         Log.d("database", "Deleting " + numDeleted);
+    }
+
+    public void updateListName(String listId, String newListName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("NAME", newListName);
+        db.update(GList.TABLE_LIST,cv,"_id=" + listId, null);
+    }
+
+    public void removeList(int listId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // remove list
+        db.delete(GList.TABLE_LIST, "_id="+listId,null);
+        // remove products
+        db.delete(Product.TABLE_PRODUCTS, "LIST_ID="+listId,null);
+        // remove recipes
+        db.delete(RecipeList.RECIPE_LIST_TABLE, "LIST_ID="+listId, null);
     }
 }

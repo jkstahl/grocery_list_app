@@ -265,7 +265,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     }
                 });
             } else {
-                ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText("[None]");
+                ((TextView) convertView.findViewById(R.id.recipe_name_label)).setText("Click to add");
                 imageView.setVisibility(ImageView.INVISIBLE);
                 deleteButton.setVisibility(Button.INVISIBLE);
                 searchButton.setVisibility(Button.INVISIBLE);
