@@ -10,15 +10,17 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 
 public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 22;
+	public static final int DATABASE_VERSION = 26;
     private List<TableMap> tables;
     private final String TAG="database";
     // TODO If we update add new columns and tables if needed to database.
@@ -64,6 +66,7 @@ public class ProductListDB extends SQLiteOpenHelper {
         //onCreate(db);
         Cursor c = db.rawQuery("SELECT * FROM sqlite_master WHERE type='table'", null);
         List<String> tableNames = new ArrayList<String>();
+
         if (c.moveToFirst()) {
             while ( !c.isAfterLast() ) {
                 String tableName = c.getString(c.getColumnIndex("name"));
@@ -80,7 +83,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
                 if (inTableList) {
                     Log.d(TAG, "Found table in list");
-                    checkTableFields(db, tableName, updateTable);
+                    //checkTableFields(db, tableName, updateTable);
                 } else {
                     String type = c.getString(c.getColumnIndex("type"));
                     int rootPage = c.getInt(c.getColumnIndex("rootpage"));
@@ -98,12 +101,46 @@ public class ProductListDB extends SQLiteOpenHelper {
         for (TableMap table: tables) {
             String defTableName = table.getTableName();
 
-            if (!tableNames.contains(defTableName)) {
-                db.execSQL(table.getTableCreatString());
-            }
+            //if (!tableNames.contains(defTableName)) {
+            //    db.execSQL(table.getTableCreatString());
+            //}
+            copyTable(db, defTableName, table);
+
         }
 
 	}
+
+    private void copyTable(SQLiteDatabase db, String tableName, TableMap updateTable) {
+        Cursor dbCursor = db.query(tableName, null, null, null, null, null, null);
+        List<String> colSet = new ArrayList<>(Arrays.asList(dbCursor.getColumnNames()));
+        List<String> defColumnNames = new ArrayList<>(Arrays.asList(updateTable.getColumns()));
+        Log.d(TAG, "DB column set: " + colSet.toString());
+        Log.d(TAG, "Definitions column set: " + defColumnNames.toString());
+        colSet.retainAll(defColumnNames);
+        Log.d(TAG, "DB column definition intersect: " + colSet.toString());
+        // create new table
+        String tableCreateString = updateTable.getTableCreatString();
+        String tableCreateStringCopy=tableCreateString.replace(updateTable.getTableName(), updateTable.getTableName()+"_COPY");
+        Log.d(TAG, tableCreateStringCopy);
+        db.execSQL(tableCreateStringCopy);
+        if (!colSet.isEmpty()){
+            // copy over old table
+            //String copyString = "INSERT INTO " + updateTable.getTableName() + "_COPY" + " SELECT * FROM " + updateTable.getTableName();
+            for(int i=0; i<defColumnNames.size()-colSet.size();i++)
+                colSet.add("NULL");
+            String copyString = "INSERT INTO " + updateTable.getTableName() + "_COPY" + " SELECT " + StringUtils.join(colSet, ", ")+ " FROM " + updateTable.getTableName();
+            Log.d(TAG, copyString);
+            db.execSQL(copyString);
+        }
+        // delete old table
+        String dropTable = "DROP TABLE IF EXISTS " + updateTable.getTableName();
+        Log.d(TAG, dropTable);
+        db.execSQL(dropTable);
+        // rename new table to old
+        String renameTable = "ALTER TABLE " + updateTable.getTableName()+"_COPY" + " RENAME TO " + updateTable.getTableName();
+        Log.d(TAG, renameTable);
+        db.execSQL(renameTable);
+    }
 
     private void checkTableFields(SQLiteDatabase db, String tableName, TableMap updateTable) {
         Cursor dbCursor = db.query(tableName, null, null, null, null, null, null);

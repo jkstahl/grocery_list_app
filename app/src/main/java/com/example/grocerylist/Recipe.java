@@ -6,8 +6,8 @@ import android.content.Intent;
 public class Recipe extends Packager implements TableElement {
 	// table of recipes
 	public static final String TABLE_RECIPE = "RECIPES";
-	public static final String[] RECIPE_COLUMNS = {"_id", "NAME", "INSTRUCTIONS", "THUMBNAIL",  "TIMESTAMP"};
-	public static final String[] RECIPE_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "BLOB", "INTEGER"};
+	public static final String[] RECIPE_COLUMNS = {"_id", "NAME", "INSTRUCTIONS", "THUMBNAIL", "DESCRIPTION", "SERVINGS", "TIMESTAMP"};
+	public static final String[] RECIPE_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "BLOB", "TEXT", "INTEGER","INTEGER"};
 
 	public Recipe(String name, String instructions) {
 		this();
