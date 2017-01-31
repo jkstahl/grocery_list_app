@@ -10,8 +10,8 @@ public class Product extends Packager implements TableElement, Serializable {
 
 	// table of all products
 	public static final String TABLE_PRODUCTS = "PRODUCTS";
-	public static final String[] PRODUCT_COLUMNS = {"_id", "NAME", "TYPE", "LIST_ID", "QUANTITY", "UNITS", "CHECK_OUT", "RECIPE_LIST_ID", "TIMESTAMP"};
-	public static final String[] PRODUCT_COLUMN_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "INTEGER", "REAL", "TEXT", "BOOLEAN", "INTEGER", "INTEGER"};
+	public static final String[] PRODUCT_COLUMNS = {"_id", "NAME", "TYPE", "LIST_ID", "QUANTITY", "UNITS", "CHECK_OUT", "CHECKOUT_TIME", "RECIPE_LIST_ID", "TIMESTAMP"};
+	public static final String[] PRODUCT_COLUMN_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "INTEGER", "REAL", "TEXT", "BOOLEAN", "INTEGER","INTEGER", "INTEGER"};
 
 	public Product(Integer listId, String name, String type, float quantity, String units, Boolean checkOut) {
 		this();

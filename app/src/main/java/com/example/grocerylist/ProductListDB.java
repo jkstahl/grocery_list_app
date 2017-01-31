@@ -20,7 +20,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 27;
+	public static final int DATABASE_VERSION = 28;
     private List<TableMap> tables;
     private final String TAG="database";
     // TODO If we update add new columns and tables if needed to database.
@@ -274,7 +274,7 @@ public class ProductListDB extends SQLiteOpenHelper {
     	//Cursor cursor = db.rawQuery(SQLStatement, null);
     	SQLiteDatabase db = this.getWritableDatabase();
     	Cursor cursor = db.query(Product.TABLE_PRODUCTS,
-                new String[] {"_id", "LIST_ID","NAME", "TYPE", "QUANTITY", "UNITS", "CHECK_OUT"},
+                Product.PRODUCT_COLUMNS,
     			"LIST_ID=" + getID,
     			null, null, null, "CHECK_OUT ASC");
         
@@ -352,14 +352,15 @@ public class ProductListDB extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public void changeCheckout(String id, boolean newValue) {
+	public void changeCheckout(String id, boolean newValue, long checkTime) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+		Log.d(TAG, "Checkout time: " + checkTime);
 		String boolString = "TRUE";
 		if (!newValue)
 			boolString = "FALSE";
 		ContentValues values = new ContentValues();
 		values.put("CHECK_OUT", newValue);
+        values.put("CHECKOUT_TIME", checkTime);
 		Log.d("management", "Setting id " + id + " to " + newValue);
 		db.update(Product.TABLE_PRODUCTS, values, "_id=" + id, null);
 		//db.close();

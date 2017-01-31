@@ -201,8 +201,10 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 		@Override
 		public void onClick(View v) {
+			long epoch = (long) System.currentTimeMillis();
+			DatabaseHolder.getDatabase(getActivity()).changeCheckout("" + this.productId, ((CheckBox) v).isChecked(), epoch);
 
-			DatabaseHolder.getDatabase(getActivity()).changeCheckout("" + this.productId, ((CheckBox) v).isChecked());
+
 			updateList();
 		}
 	}
