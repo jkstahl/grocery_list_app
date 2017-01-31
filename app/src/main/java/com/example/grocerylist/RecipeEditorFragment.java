@@ -100,13 +100,19 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         recipeName = (TextView) rootView.findViewById(R.id.recipe_name_label);
         EditText instructions = (EditText) rootView.findViewById(R.id.edit_instructions);
         ingredientsList = (ListView) rootView.findViewById(R.id.ingredient_list);
+        EditText description = (EditText) rootView.findViewById(R.id.description_edit_text);
+        EditText servings = (EditText) rootView.findViewById(R.id.servings_edit_text);
+
         if( newRecipe ) {
             String tempName = contextIntent.getStringExtra("NEW_RECIPE_NAME");
             recipeName.setText(tempName);
+            servings.setText("1");
             recipeId = "-1";
         }    else {
             recipeName.setText((String) recipe.get("NAME"));
             instructions.setText((String) recipe.get("INSTRUCTIONS"));
+            description.setText ((String) recipe.get("DESCRIPTION"));
+            servings.setText("" + recipe.get("SERVINGS"));
             this.recipeId = contextIntent.getStringExtra("RECIPE_ID");
         }
 
@@ -114,6 +120,9 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
 
         recipe.setView("NAME", recipeName);
         recipe.setView("INSTRUCTIONS", instructions);
+        recipe.setView("DESCRIPTION", description);
+        recipe.setView("SERVINGS", servings);
+
 
         //Set up ingredients list
 

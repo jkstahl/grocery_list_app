@@ -20,7 +20,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 26;
+	public static final int DATABASE_VERSION = 27;
     private List<TableMap> tables;
     private final String TAG="database";
     // TODO If we update add new columns and tables if needed to database.
@@ -125,8 +125,8 @@ public class ProductListDB extends SQLiteOpenHelper {
         db.execSQL(tableCreateStringCopy);
         if (!colSet.isEmpty()){
             // copy over old table
-            //String copyString = "INSERT INTO " + updateTable.getTableName() + "_COPY" + " SELECT * FROM " + updateTable.getTableName();
-            for(int i=0; i<defColumnNames.size()-colSet.size();i++)
+            int colDif = defColumnNames.size()-colSet.size();
+            for(int i=0; i<colDif;i++)
                 colSet.add("NULL");
             String copyString = "INSERT INTO " + updateTable.getTableName() + "_COPY" + " SELECT " + StringUtils.join(colSet, ", ")+ " FROM " + updateTable.getTableName();
             Log.d(TAG, copyString);
