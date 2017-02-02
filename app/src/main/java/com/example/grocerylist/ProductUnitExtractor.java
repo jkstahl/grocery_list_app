@@ -208,6 +208,7 @@ public class ProductUnitExtractor {
     }
 
     private String wordsToNumbers(String workingString) {
+        // TODO check for 1 1/4 type number
         Matcher m = numberWordSearch.matcher(workingString);
         String numberSequence="";
         if (m.find()) {
