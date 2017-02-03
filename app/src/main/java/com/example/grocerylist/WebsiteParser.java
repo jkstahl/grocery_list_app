@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 
 public class WebsiteParser {
-    private final String TAG = "websiteparser";
+    private String TAG = "websiteparser";
     private Map<String,String[]> drillBits;
     private final int IMAGE_INDEX=0;
     private final int NAME_INDEX = 1;
@@ -33,10 +33,10 @@ public class WebsiteParser {
         drillBits = new HashMap<>();
         drillBits.put("allrecipes.com",
                 new String[]{
+                        "\"recipeImageUrl\":\"([^\"]+)\"",
+                        "<h1 class=\"recipe-summary__h1\" itemprop=\"name\">(.*)</h1>",
                         "<span class=\"recipe-ingred_txt added\" data-id=\"[0-9]+\" data-nameid=\"[0-9]+\" itemprop=\"ingredients\">(.*)</span>",
-                        "<span class=\"recipe-directions__list--item\">(.*)</span></li>",
-                        "\"recipeTitle\":\"([^\"]+)\"",
-                        "\"recipeImageUrl\":\"([^\"]+)\""
+                        "<span class=\"recipe-directions__list--item\">(.*)</span></li>"
         });
     }
 
@@ -45,6 +45,8 @@ public class WebsiteParser {
         HttpURLConnection urlConnection=null;
 
         boolean useDrillBit  = false;
+        boolean foundSerings=false;
+
         String drillBit = null;
         List<Pattern> drillBitList = new ArrayList<Pattern>();
         Pattern servingsPattern = Pattern.compile("(?i)(([0-9]{1,2}) Serving[s]?|Serving[s]?[:]? ([0-9]{1,2}))");
@@ -72,7 +74,7 @@ public class WebsiteParser {
             int drillBitIndex=0;
             while ((line = in.readLine()) != null) {
                 //Log.d(TAG, line);
-                //if (line.contains("Cabbage Rolls II"))
+                //if (line.contains("Somali Spaghetti Sauce"))
                 //    System.out.println(line);
 
                 if (useDrillBit) {
@@ -95,7 +97,8 @@ public class WebsiteParser {
                                     returnData.ingredients.add(newIngredient);
                                     break;
                                 case DIRECTIONS_INDEX:
-                                    returnData.recipe.put("DIRECTIONS", foundData);
+                                    String currectDirections = (String) returnData.recipe.get("INSTRUCTIONS");
+                                    returnData.recipe.put("INSTRUCTIONS", currectDirections + foundData + "\n");
                                     break;
                             }
                         }
@@ -104,8 +107,15 @@ public class WebsiteParser {
 
                     // Find servings
                     m=servingsPattern.matcher(line);
-                    if (m.find())
+                    if (m.find() && !foundSerings) {
                         System.out.println("FOUND SERVINGS: " + m.group(0) + " number:" + m.group(2));
+                        try {
+                            returnData.recipe.put("SERVINGS", Integer.parseInt(m.group(2)));
+                            foundSerings=true;
+                        } catch (Exception e ) {
+
+                        }
+                    }
 
                     // Find recipe name
                 }
@@ -127,6 +137,7 @@ public class WebsiteParser {
         public FormattedData() {
             ingredients = new ArrayList<>();
             recipe = new Recipe();
+            recipe.put("DIRECTIONS", "");
         }
     }
 }

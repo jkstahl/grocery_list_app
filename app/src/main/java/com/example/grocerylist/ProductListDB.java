@@ -20,10 +20,10 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 28;
+	public static final int DATABASE_VERSION = 30;
     private List<TableMap> tables;
     private final String TAG="database";
-    // TODO If we update add new columns and tables if needed to database.
+    // If we update add new columns and tables if needed to database.
 	
 	public ProductListDB(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -152,7 +152,7 @@ public class ProductListDB extends SQLiteOpenHelper {
             if (!defColumnNames.contains(colName)) {
                 Log.d(TAG, "Database table not in the definitions." + colName);
                 //db.execSQL("ALTER TABLE " + tableName + " DROP COLUMN " + colName);
-                // TODO Drop column from table.  Can't use SQL statement to do this.  Need to copy table without column, delete old, copy back.
+                //  Drop column from table.  Can't use SQL statement to do this.  Need to copy table without column, delete old, copy back.
             }
         }
 
@@ -459,7 +459,7 @@ public class ProductListDB extends SQLiteOpenHelper {
         Log.d("database", "Creating recipe list cursor");
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor recipeCursor = db.query(Ingredients.TABLE_PRODUCTS,
-                new String[]{"INGREDIENTS._id", "RECIPE_ID", "INGREDIENTS.NAME", "QUANTITY", "UNITS", "USE_IN_LIST"},
+                new String[]{"INGREDIENTS._id", "RECIPE_ID", "INGREDIENTS.NAME", "USE_IN_LIST"},
                 "INGREDIENTS.RECIPE_ID=" + listId,null, null, null,null);
         //Cursor recipeCursor = db.rawQuery("SELECT INGREDIENTS._id, RECIPE_ID, INGREDIENTS.NAME, QUANTITY, UNITS FROM INGREDIENTS",null); //JOIN RECIPES ON INGREDIENTS.RECIPE_ID=" + listId + "", null);
         this.printAll(recipeCursor);

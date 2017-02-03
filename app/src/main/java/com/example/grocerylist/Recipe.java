@@ -6,8 +6,8 @@ import android.content.Intent;
 public class Recipe extends Packager implements TableElement {
 	// table of recipes
 	public static final String TABLE_RECIPE = "RECIPES";
-	public static final String[] RECIPE_COLUMNS = {"_id", "NAME", "INSTRUCTIONS", "THUMBNAIL", "DESCRIPTION", "SERVINGS", "TIMESTAMP"};
-	public static final String[] RECIPE_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "BLOB", "TEXT", "INTEGER","INTEGER"};
+	public static final String[] RECIPE_COLUMNS = {"_id", "NAME", "INSTRUCTIONS", "THUMBNAIL", "DESCRIPTION", "SERVINGS", "URL", "TIMESTAMP"};
+	public static final String[] RECIPE_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "TEXT", "BLOB", "TEXT", "INTEGER", "TEXT","INTEGER"};
 
 	public Recipe(String name, String instructions) {
 		this();
@@ -41,6 +41,17 @@ public class Recipe extends Packager implements TableElement {
 	@Override
 	public String[] getColumnTypes() {
 		return RECIPE_TYPES;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Recipe) {
+			Recipe r = (Recipe) o;
+			return r.get("NAME").equals(this.get("NAME")) &&
+					r.get("INSTRUCTIONS").equals(this.get("INSTRUCTIONS")) &&
+					r.get("SERVINGS") == this.get("SERVINGS");
+		}
+		return false;
 	}
 	
 }

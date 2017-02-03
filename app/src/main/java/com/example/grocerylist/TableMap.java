@@ -105,26 +105,32 @@ public abstract class TableMap implements TableElement, Serializable {
 		return returnString;
 	}
 	
+@Override
+	public String toString() {
+		String returnString = "";
+		for (int i=0; i<getColumns().length; i++) {
+			returnString += (getColumns()[i] + " -> " + get(getColumns()[i])+"\n") ;
+		}
+		return returnString;
+}
 
 	/**
 	 * Test the object to see if they are equal.
 	 */
-	/*
 	public boolean equals(Object testObj) {
 		if (!(testObj instanceof TableMap))
 			return false;
 		
 		TableMap testMap = (TableMap) testObj;
-		if (testMap.size() != this.size())
-			return false;
 		
-		for (String test : this.keySet()) {
-			if (!testMap.containsKey(test))
-				return false;
-			if (!testMap.get(test).equals(this.get(test)))
+		for (String test : getColumns()) {
+			if (testMap.get(test) == null || this.get(test) == null) {
+				if (testMap.get(test) != this.get(test))
+					return false;
+			} else if (!testMap.get(test).equals(this.get(test)))
 				return false;
 		}
 		
 		return true;
-	}*/
+	}
 }

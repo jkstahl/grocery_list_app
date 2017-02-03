@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -118,15 +120,27 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
 
         Log.d(TAG, "Id is " + recipeId);
 
+        EditText urlEdit = (EditText) rootView.findViewById(R.id.url_edit_text);
+        if (recipe.get("URL") != null && !recipe.get("URL").equals("")){
+            urlEdit.setText((String) recipe.get("URL"));
+        }
+        ((Button) rootView.findViewById(R.id.url_import_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         recipe.setView("NAME", recipeName);
         recipe.setView("INSTRUCTIONS", instructions);
         recipe.setView("DESCRIPTION", description);
         recipe.setView("SERVINGS", servings);
-
+        recipe.setView("URL", urlEdit);
 
         //Set up ingredients list
 
         getLoaderManager().initLoader(2, null, this);
+
         return rootView;
     }
 
@@ -439,6 +453,21 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         @Override
         protected Cursor loadCursor() {
             return productDatabase.getIngredientsForRecipe(recipeId);
+        }
+    }
+
+    private static class WebpageLoader extends AsyncTaskLoader<WebsiteParser.FormattedData> {
+        public static int LOADER_ID=3;
+        private String TAG="webpageloader";
+
+        public WebpageLoader(Context context) {
+            super(context);
+        }
+
+        @Override
+        public WebsiteParser.FormattedData loadInBackground() {
+            Log.d(TAG, "Loading webpage.");
+            return null;
         }
     }
 }

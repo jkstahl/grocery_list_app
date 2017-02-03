@@ -3,12 +3,9 @@ package com.example.grocerylist;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import android.content.Context;
 import android.content.SharedPreferences;

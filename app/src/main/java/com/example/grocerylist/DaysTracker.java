@@ -10,7 +10,7 @@ public class DaysTracker {
     private String[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
     public String getDayFromPosition(int position) {
-        //TODO make days of the week relative to current
+        //make days of the week relative to current
         Calendar c = Calendar.getInstance();
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK)-1;
 

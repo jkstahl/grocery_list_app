@@ -8,8 +8,8 @@ public class Ingredients extends Packager {
 
     // table of all products
     public static final String TABLE_PRODUCTS = "INGREDIENTS";
-    public static final String[] PRODUCT_COLUMNS = {"_id", "RECIPE_ID","NAME", "QUANTITY", "UNITS", "USE_IN_LIST", "TIMESTAMP"};
-    public static final String[] PRODUCT_COLUMN_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "TEXT", "REAL", "TEXT", "BOOLEAN", "INTEGER"};
+    public static final String[] PRODUCT_COLUMNS = {"_id", "RECIPE_ID","NAME", "USE_IN_LIST", "TIMESTAMP"};
+    public static final String[] PRODUCT_COLUMN_TYPES = {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "TEXT", "BOOLEAN", "INTEGER"};
 
     public Ingredients(Integer recipeId, String name, Float quantity, String units) {
         this();
@@ -19,6 +19,11 @@ public class Ingredients extends Packager {
         put("UNITS", units);
         put("USE_IN_LIST", true);
         put("TIMESTAMP", 10);
+    }
+
+    public Ingredients(String name) {
+        super();
+        put("NAME", name);
     }
 
     public Ingredients() {super();}
