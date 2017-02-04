@@ -68,10 +68,16 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
     private boolean editMode;
 
     public void setEditAble(){
-        recipeName.setEnabled(editMode);
-        instructions.setEnabled(editMode);
-        description.setEnabled(editMode);
-        servings.setEnabled(editMode);
+        recipeName.setFocusable(editMode);
+        instructions.setFocusable(editMode);
+        description.setFocusable(editMode);
+        servings.setFocusable(editMode);
+
+        recipeName.setFocusableInTouchMode(editMode);
+        instructions.setFocusableInTouchMode(editMode);
+        description.setFocusableInTouchMode(editMode);
+        servings.setFocusableInTouchMode(editMode);
+
     }
 
     @Override
@@ -158,7 +164,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         recipe.setView("URL", urlEdit);
 
         //Set up ingredients list
-
+        setEditAble();
         getLoaderManager().initLoader(2, null, this);
         return rootView;
     }
@@ -230,7 +236,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     productDatabase.deleteIngredientsFromRecipe(recipe);
                     for (Ingredients ing : ingredientList) {
 
-                        // TODO format ingredients unsing unit extractor
+                        // format ingredients unsing unit extractor
                         if (newRecipe) { // put the recipe id in if this is a new recipe becase we just added the recipe.
                             ing.put("RECIPE_ID", recipe.get("_id"));
                             returnIntent.putExtra("_id", "" + recipe.get("_id"));
@@ -339,7 +345,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         @Override
         public int getCount(){
 
-            if (editPosition == -1)
+            if (editPosition == -1 && editMode)
                 return ingredientArrayList.size() + 1;
             else
                 return ingredientArrayList.size();
@@ -398,6 +404,10 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                             notifyDataSetChanged();
                         }
                     });
+                    if (editMode)
+                        deleteButton.setVisibility(Button.VISIBLE);
+                    else
+                        deleteButton.setVisibility(Button.INVISIBLE);
 
                     final CheckBox ingredientAdd = (CheckBox) convertView.findViewById(R.id.list_add_checkbox);
                     ingredientAdd.setOnClickListener(null);

@@ -88,6 +88,8 @@ public class ProductUnitExtractorTest {
         String defaultUnit = "";
         assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("sugar", .25, "cup"), pue.getUnitsProductFromString("1/4 cups of sugar"));
         assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("carrot", .5, defaultUnit), pue.getUnitsProductFromString("1 / 2  carrot"));
+        assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("carrot", 1.5, defaultUnit), pue.getUnitsProductFromString("1 1/2  carrot"));
+        assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("apples", 11.5, "ounce"), pue.getUnitsProductFromString("11 1/2 ounce apples"));
     }
 
 }

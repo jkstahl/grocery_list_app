@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
  */
 
 public class ProductUnitExtractor {
+    //TODO Make this static
     private Pattern fractionParser;
     private Pattern numberWordParserSearch;
     private Pattern quantityProductPattern;
@@ -78,12 +79,12 @@ public class ProductUnitExtractor {
         }
 
         // build the pattern
-        String fractionRegex = "[0-9]+[ ]?/[ ]?[0-9]+";
+        String fractionRegex = "([0-9]* )?[0-9]+[ ]?/[ ]?[0-9]+";
         String numberWordPatternString = "(?i)(^| )(" + join(numberWords, " *|") + " *|"+fractionRegex+")+ ";
         numberWordSearch = Pattern.compile(numberWordPatternString);
         String numberWordParserPatternString = "(?i)(" + join(numberWords, " *|") + " *)";
         numberWordParserSearch = Pattern.compile(numberWordParserPatternString);
-        String fractionParserString = fractionRegex;
+        String fractionParserString = "([0-9]* )?([0-9]+)[ ]?/[ ]?([0-9]+)";
         fractionParser = Pattern.compile(fractionParserString);
 
         // build map of units that we should be using.
@@ -208,7 +209,7 @@ public class ProductUnitExtractor {
     }
 
     private String wordsToNumbers(String workingString) {
-        // TODO check for 1 1/4 type number
+        // check for 1 1/4 type number
         Matcher m = numberWordSearch.matcher(workingString);
         String numberSequence="";
         if (m.find()) {
@@ -223,13 +224,16 @@ public class ProductUnitExtractor {
         m = fractionParser.matcher(numberSequence);
         double number =0;
         if (m.find()) {
-            String[] numerDenomer = m.group().split("[ ]?/[ ]?");
-            double numerator = Double.parseDouble(numerDenomer[0].trim());
-            double denominator = Double.parseDouble(numerDenomer[1].trim());
+            //String[] numerDenomer = m.group().split("[ ]?/[ ]?");
+            String prefix = m.group(1);
+            double numerator = Double.parseDouble(m.group(2).trim());
+            double denominator = Double.parseDouble(m.group(3).trim());
             if (denominator == 0)
                 number = 0;
             else
                 number = numerator/denominator;
+            if(prefix != null)
+                number+=Integer.parseInt(prefix.trim());
         }else {
             m = numberWordParserSearch.matcher(numberSequence);
             while (m.find()) {
@@ -242,6 +246,10 @@ public class ProductUnitExtractor {
         workingString = workingString.replace(numberSequence, "" + number );
 
         return  workingString;
+    }
+
+    public Pattern getQuantityProductPattern() {
+        return quantityUnitsPattern;
     }
 
     public QuantityUnitPackage getQuantityUnitsClass(String carrot, double i, String each) {

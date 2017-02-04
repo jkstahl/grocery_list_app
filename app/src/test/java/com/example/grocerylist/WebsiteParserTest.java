@@ -1,3 +1,4 @@
+
 package com.example.grocerylist;
 
 import org.junit.Test;
@@ -19,7 +20,7 @@ import static junit.framework.Assert.assertEquals;
 public class WebsiteParserTest {
 
     @Test
-    public void basicWebsite() throws Exception {
+    public void allrecipes() throws Exception {
 
         //WebsiteParser wp = new WebsiteParser();
         WebsiteParser wp = new WebsiteParser();
@@ -57,7 +58,7 @@ public class WebsiteParserTest {
         ingredientExpect.add(new Ingredients("2 tablespoons water, or to taste (optional)"));
         ingredientExpect.add(new Ingredients("1 (16 ounce) package angel hair pasta"));
         for (int i=0; i<fd.ingredients.size(); i++)
-            assertEquals(ingredientExpect.get(i), fd.ingredients.get(i));
+            assertEquals(fd.ingredients.get(i),ingredientExpect.get(i));
 
 
         fd=wp.parseSite("http://allrecipes.com/recipe/20045/cabbage-rolls-ii/?clickId=right%20rail%200&internalSource=rr_feed_recipe&referringId=20045&referringContentType=recipe");
@@ -82,6 +83,73 @@ public class WebsiteParserTest {
                         "Broil for 10 to 15 minutes, until lightly brown.\n");
         recipeExpect.put("SERVINGS", 4);
         assertEquals(recipeExpect,fd.recipe);
+
+        // seaseme chicken.
+        fd=wp.parseSite("http://allrecipes.com/recipe/61071/addictive-sesame-chicken/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%204");
+        recipeExpect = new Recipe();
+        recipeExpect.put("NAME", "Addictive Sesame Chicken");
+        ingredientExpect = new ArrayList<Ingredients>();
+        ingredientExpect.add(new Ingredients("2 tablespoons soy sauce"));
+        ingredientExpect.add(new Ingredients("1 tablespoon dry sherry"));
+        ingredientExpect.add(new Ingredients("1 dash sesame oil"));
+        ingredientExpect.add(new Ingredients("2 tablespoons all-purpose flour"));
+        ingredientExpect.add(new Ingredients("2 tablespoons cornstarch"));
+        ingredientExpect.add(new Ingredients("2 tablespoons water"));
+        ingredientExpect.add(new Ingredients("1/4 teaspoon baking powder"));
+        ingredientExpect.add(new Ingredients("1/4 teaspoon baking soda"));
+        ingredientExpect.add(new Ingredients("1 teaspoon canola oil"));
+        ingredientExpect.add(new Ingredients("4 (5 ounce) skinless, boneless chicken breast halves, cut into 1-inch cubes"));
+        ingredientExpect.add(new Ingredients("1 quart vegetable oil for frying"));
+        ingredientExpect.add(new Ingredients("1/2 cup water"));
+        ingredientExpect.add(new Ingredients("1 cup chicken broth"));
+        ingredientExpect.add(new Ingredients("1/4 cup distilled white vinegar"));
+        ingredientExpect.add(new Ingredients("1/4 cup cornstarch"));
+        ingredientExpect.add(new Ingredients("1 cup white sugar"));
+        ingredientExpect.add(new Ingredients("2 tablespoons soy sauce"));
+        ingredientExpect.add(new Ingredients("2 tablespoons sesame oil"));
+        ingredientExpect.add(new Ingredients("1 teaspoon red chile paste (such as Thai Kitchen&#174;)"));
+        ingredientExpect.add(new Ingredients("1 clove garlic, minced"));
+        ingredientExpect.add(new Ingredients("2 tablespoons toasted sesame seeds"));
+        for (int i=0; i<fd.ingredients.size(); i++)
+            assertEquals(fd.ingredients.get(i), ingredientExpect.get(i));
+
+        recipeExpect.put("INSTRUCTIONS",
+                "Combine the 2 tablespoons soy sauce, the dry sherry, dash of sesame oil, flour, 2 tablespoons cornstarch, 2 tablespoons water, baking powder, baking soda, and canola oil in a large bowl. Mix well; stir in the chicken. Cover and refrigerate for 20 minutes.\n" +
+                        "Heat oil in a deep-fryer or large saucepan to 375 degrees F (190 degrees C).\n" +
+                        "Combine the 1/2 cup water, chicken broth, vinegar, 1/4 cup cornstarch, sugar, 2 tablespoons soy sauce, 2 tablespoons sesame oil, red chili paste, and garlic in a small saucepan. Bring to a boil, stirring constantly. Turn heat to low and keep warm, stirring occasionally.\n" +
+                        "Fry the marinated chicken in batches until cooked through and golden brown, 3 to 5 minutes. Drain on paper towels.\n" +
+                        "Transfer the chicken to a large platter, top with sauce, and sprinkle with sesame seeds.\n");
+        recipeExpect.put("SERVINGS", 4);
+        assertEquals(recipeExpect,fd.recipe);
+    }
+
+    @Test
+    public void weightWatchers() throws Exception {
+
+        //WebsiteParser wp = new WebsiteParser();
+        WebsiteParser wp = new WebsiteParser();
+        WebsiteParser.FormattedData fd = wp.parseSite("https://www.weightwatchers.com/us/recipe/baked-ziti-turkey-sausage-1/5626a601a6d5b396106ff961");
+        // Check parsed data is correct from website.
+        Recipe recipeExpect = new Recipe();
+        List<Ingredients> ingredientExpect = new ArrayList<Ingredients>();
+        ingredientExpect.add(new Ingredients("3/4 pound(s) uncooked turkey sausage(s), spicy-variety, casings removed"));
+        ingredientExpect.add(new Ingredients("1 medium uncooked onion(s), chopped"));
+        ingredientExpect.add(new Ingredients("1 medium green pepper(s), chopped"));
+        ingredientExpect.add(new Ingredients("28 oz canned diced tomatoes"));
+        ingredientExpect.add(new Ingredients("10 oz frozen green peas, thawed"));
+        ingredientExpect.add(new Ingredients("2 Tbsp canned tomato paste"));
+        ingredientExpect.add(new Ingredients("1 tsp dried oregano"));
+        ingredientExpect.add(new Ingredients("1 tsp dried basil"));
+        ingredientExpect.add(new Ingredients("1/2 tsp dried thyme"));
+        ingredientExpect.add(new Ingredients("1/2 tsp fennel seed"));
+        ingredientExpect.add(new Ingredients("1/2 tsp table salt, or to taste"));
+        ingredientExpect.add(new Ingredients("1/2 tsp black pepper, freshly ground"));
+        ingredientExpect.add(new Ingredients("12 oz uncooked whole wheat pasta, ziti, cooked according to package directions"));
+        ingredientExpect.add(new Ingredients("6 oz shredded part-skim mozzarella cheese"));
+        for (int i=0; i<fd.ingredients.size(); i++)
+            assertEquals(fd.ingredients.get(i), ingredientExpect.get(i));
+
+
     }
 
 

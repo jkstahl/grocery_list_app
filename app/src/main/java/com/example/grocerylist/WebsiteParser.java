@@ -15,6 +15,7 @@ import java.net.URLConnection;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,24 +27,33 @@ import java.util.regex.Pattern;
 
 public class WebsiteParser {
     private String TAG = "websiteparser";
-    private Map<String,String[]> drillBits;
+    private Map<String,DrillBit> drillBits;
     private final int IMAGE_INDEX=0;
     private final int NAME_INDEX = 1;
     private final int INGREDIENTS_INDEX=2;
     private final int DIRECTIONS_INDEX=3;
 
+
     public WebsiteParser() {
         drillBits = new HashMap<>();
-        drillBits.put("allrecipes.com",
+        drillBits.put("allrecipes.com",new DrillBit(1,
                 new String[]{
                         "\"recipeImageUrl\":\"([^\"]+)\"",
                         "<h1 class=\"recipe-summary__h1\" itemprop=\"name\">(.*)</h1>",
                         "<span class=\"recipe-ingred_txt added\" data-id=\"[0-9]+\" data-nameid=\"[0-9]+\" itemprop=\"ingredients\">(.*)</span>",
                         "<span class=\"recipe-directions__list--item\">(.*)</span></li>"
-        });
+        }));
+        drillBits.put("weightwatchers.com",new DrillBit(2,
+                new String[]{
+                        "<askdfjhasdlkfjahsdfjjh>",
+                        "<h1 class=\"recipe-summary__h1\" itemprop=\"name\">(.*)</h1>",
+                        "<li class=\"detail-list__item\" itemprop=\"recipeIngredient\">.*<span>(.*)</span>",
+                        "<span class=\"recipe-directions__list--item\">(.*)</span></li>"
+                }));
     }
 
     public FormattedData parseSite(String webpage) {
+        Pattern ingredientFinderPattern = (new ProductUnitExtractor()).getQuantityProductPattern();
         FormattedData returnData = new FormattedData();
         HttpURLConnection urlConnection=null;
 
@@ -52,15 +62,19 @@ public class WebsiteParser {
 
         String drillBit = null;
         List<Pattern> drillBitList = new ArrayList<Pattern>();
+        List<String> drillLines = new LinkedList<>();
+        int numDrillLines = 0;
+
         Pattern servingsPattern = Pattern.compile("(?i)(([0-9]{1,2}) Serving[s]?|Serving[s]?[:]? ([0-9]{1,2}))");
         for (String domain : drillBits.keySet()) {
             if (webpage.contains(domain)) {
                 System.out.println("Found drill bit for domain: " + domain);
                 useDrillBit = true;
                 drillBit = domain;
-                String[] bit =  drillBits.get(domain);
+                String[] bit =  drillBits.get(domain).drillString;
                 for (int i=0; i<bit.length; i++)
                     drillBitList.add(Pattern.compile(bit[i]));
+                numDrillLines = drillBits.get(domain).bufferLines;
             }
         }
 
@@ -83,11 +97,19 @@ public class WebsiteParser {
                 if (useDrillBit) {
                     Matcher m;
                     int i = 0;
+                    if (drillLines.size() == numDrillLines)
+                        drillLines.remove(0);
+                    String newLine = "";
+                    drillLines.add(line);
+                    for (String dl : drillLines)
+                        newLine += dl;
+                    line = newLine;
+
                     for (Pattern drillPattern : drillBitList) {
                         m = drillPattern.matcher(line);
                         if (m.find()) {
                             System.out.println("FOUND: " + m.group(1));
-                            String foundData = m.group(1);
+                            String foundData = m.group(1).replaceAll("<([/]?[a-zA-Z0-9])+>", "");
                             switch (i) {
                                 case IMAGE_INDEX:
                                     try {
@@ -133,6 +155,12 @@ public class WebsiteParser {
                     }
 
                     // Find recipe name
+                } else {
+                    String linePure = line.replaceAll("<([/]?[a-zA-Z0-9])+>", "");
+                    Matcher m = ingredientFinderPattern.matcher(linePure);
+                    if (m.find()) {
+                        System.out.println(line);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -153,6 +181,15 @@ public class WebsiteParser {
             ingredients = new ArrayList<>();
             recipe = new Recipe();
             recipe.put("DIRECTIONS", "");
+        }
+    }
+
+    private class DrillBit {
+        public String[] drillString;
+        public int bufferLines;
+        public DrillBit(int i, String[] strings) {
+            drillString = strings;
+            bufferLines = i;
         }
     }
 }
