@@ -79,7 +79,7 @@ public class ProductUnitExtractor {
 
         // build the pattern
         String fractionRegex = "[0-9]+[ ]?/[ ]?[0-9]+";
-        String numberWordPatternString = "(?i)(" + join(numberWords, " *|") + " *|"+fractionRegex+")+";
+        String numberWordPatternString = "(?i)(^| )(" + join(numberWords, " *|") + " *|"+fractionRegex+")+ ";
         numberWordSearch = Pattern.compile(numberWordPatternString);
         String numberWordParserPatternString = "(?i)(" + join(numberWords, " *|") + " *)";
         numberWordParserSearch = Pattern.compile(numberWordParserPatternString);

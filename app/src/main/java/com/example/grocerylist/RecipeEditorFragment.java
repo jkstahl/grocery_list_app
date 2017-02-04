@@ -65,6 +65,15 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
     private EditText description;
     private EditText servings;
 
+    private boolean editMode;
+
+    public void setEditAble(){
+        recipeName.setEnabled(editMode);
+        instructions.setEnabled(editMode);
+        description.setEnabled(editMode);
+        servings.setEnabled(editMode);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,11 +88,13 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         newRecipe = contextIntent.hasExtra("NEW_RECIPE_NAME");
         if (newRecipe) {
             recipe = new Recipe();
+            editMode = true;
         } else {
             recipe = new Recipe();
             Cursor recipeCursor = productDatabase.getRecipeFromId((String) contextIntent.getStringExtra("RECIPE_ID"));
             recipe.setCursorData(recipeCursor);
             //recipe = new Recipe(contextIntent);
+            editMode=false;
         }
 
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
