@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -63,6 +64,7 @@ public class DbBitmapUtility {
 
     // convert from bitmap to byte array
         public static byte[] getBytes(Bitmap bitmap) {
+            bitmap = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);

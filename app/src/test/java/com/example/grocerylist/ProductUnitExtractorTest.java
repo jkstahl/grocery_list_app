@@ -78,6 +78,7 @@ public class ProductUnitExtractorTest {
         assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("cranberries", 49, defaultUnit), pue.getUnitsProductFromString("forty nine cranberries"));
         assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("cola", 2, defaultUnit), pue.getUnitsProductFromString("   2 cola"));
         assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("cherry coke", 6, defaultUnit), pue.getUnitsProductFromString("six cherry coke"));
+        assertEquals("Quantity unit product test failed.", pue.getQuantityUnitsClass("skinless boneless chicken breasts", 3, defaultUnit), pue.getUnitsProductFromString("3 skinless, boneless chicken breasts"));
     }
 
     @Test

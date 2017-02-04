@@ -1,9 +1,12 @@
 package com.example.grocerylist;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -87,6 +90,18 @@ public class WebsiteParser {
                             String foundData = m.group(1);
                             switch (i) {
                                 case IMAGE_INDEX:
+                                    try {
+                                        URL url = new URL(foundData);
+                                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                                        connection.setDoInput(true);
+                                        connection.connect();
+                                        InputStream input = connection.getInputStream();
+                                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                                        returnData.recipe.put("THUMBNAIL", DbBitmapUtility.getBytes(myBitmap));
+                                    } catch (IOException e) {
+                                        // Log exception
+                                        Log.e(TAG, "Bad image url.");
+                                    }
                                     break;
                                 case NAME_INDEX:
                                     returnData.recipe.put("NAME", foundData);

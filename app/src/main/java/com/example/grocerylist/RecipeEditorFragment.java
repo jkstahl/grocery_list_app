@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,22 +48,28 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by neoba on 1/1/2017.
  */
-public class RecipeEditorFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class RecipeEditorFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, WebpageLoaderCallback {
     private final String TAG="recipeeditor";
 
     private Recipe recipe;
     private String recipeId;
     private ListView ingredientsList;
     private boolean newRecipe = false;
-    private TextView recipeName;
     private int PICK_IMAGE_REQUEST = 1;
     private Bitmap recipeImageBitmap=null;
     private ProductUnitExtractor unitExtractor;
+    private RecipeEditorFragment thisActivity=null;
+
+    private TextView recipeName;
+    private EditText instructions;
+    private EditText description;
+    private EditText servings;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        thisActivity=this;
 
         ProductListDB productDatabase = DatabaseHolder.getDatabase(getActivity());
         unitExtractor = new ProductUnitExtractor();
@@ -100,10 +108,10 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         recipeImage.setImageBitmap(DbBitmapUtility.getImage(getActivity(), (byte[]) image ));
 
         recipeName = (TextView) rootView.findViewById(R.id.recipe_name_label);
-        EditText instructions = (EditText) rootView.findViewById(R.id.edit_instructions);
+        instructions = (EditText) rootView.findViewById(R.id.edit_instructions);
         ingredientsList = (ListView) rootView.findViewById(R.id.ingredient_list);
-        EditText description = (EditText) rootView.findViewById(R.id.description_edit_text);
-        EditText servings = (EditText) rootView.findViewById(R.id.servings_edit_text);
+        description = (EditText) rootView.findViewById(R.id.description_edit_text);
+        servings = (EditText) rootView.findViewById(R.id.servings_edit_text);
 
         if( newRecipe ) {
             String tempName = contextIntent.getStringExtra("NEW_RECIPE_NAME");
@@ -120,14 +128,15 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
 
         Log.d(TAG, "Id is " + recipeId);
 
-        EditText urlEdit = (EditText) rootView.findViewById(R.id.url_edit_text);
+        final EditText urlEdit = (EditText) rootView.findViewById(R.id.url_edit_text);
         if (recipe.get("URL") != null && !recipe.get("URL").equals("")){
             urlEdit.setText((String) recipe.get("URL"));
         }
         ((Button) rootView.findViewById(R.id.url_import_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                WebpageLoader wl = new WebpageLoader(getActivity(), thisActivity);
+                wl.execute(urlEdit.getText().toString());
             }
         });
 
@@ -140,8 +149,20 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         //Set up ingredients list
 
         getLoaderManager().initLoader(2, null, this);
-
         return rootView;
+    }
+
+    public void setImage(Bitmap thumbNail) {
+        try {
+            // Log.d(TAG, String.valueOf(bitmap));
+            //Bitmap thumbNail = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
+            //thumbNail = DbBitmapUtility.getBitmap(thumbNail, path);
+            ImageView imageView = (ImageView) getActivity().findViewById(R.id.recipe_image);
+            imageView.setImageBitmap(thumbNail);
+            recipeImageBitmap = thumbNail;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -155,14 +176,9 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             try {
                 String path = uri.getPath();
                 Log.d(TAG, "Image path: " + path);
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                Bitmap thumbNail = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
 
-                // Log.d(TAG, String.valueOf(bitmap));
-                Bitmap thumbNail = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
-                //thumbNail = DbBitmapUtility.getBitmap(thumbNail, path);
-                ImageView imageView = (ImageView) getActivity().findViewById(R.id.recipe_image);
-                imageView.setImageBitmap(thumbNail);
-                recipeImageBitmap = thumbNail;
+                setImage(thumbNail);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -248,6 +264,36 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         ingredientsList.setAdapter(null);
+    }
+
+    private boolean isEmpty(String testString) {
+        return testString == null || testString.trim().equals("");
+    }
+
+    @Override
+    public void webpadeLoadFinished(Recipe loadedRecipe, List<Ingredients> ingredientsList) {
+        if (loadedRecipe != null) {
+            Log.d(TAG, "Callback function called");
+            if (!isEmpty((String) loadedRecipe.get("NAME")))
+                recipeName.setText((String) loadedRecipe.get("NAME"));
+            if (!isEmpty((String) loadedRecipe.get("INSTRUCTIONS")))
+                instructions.setText((String) loadedRecipe.get("INSTRUCTIONS"));
+            if (!isEmpty((String) loadedRecipe.get("DESCRIPTION")))
+                description.setText((String) loadedRecipe.get("DESCRIPTION"));
+            if (loadedRecipe.get("SERVINGS") != null)
+                servings.setText("" + loadedRecipe.get("SERVINGS"));
+
+            if (loadedRecipe.get("THUMBNAIL") != null && ((byte[]) loadedRecipe.get("THUMBNAIL")).length > 1)
+                setImage(DbBitmapUtility.getImage(getActivity(), ((byte[]) loadedRecipe.get("THUMBNAIL"))));
+            if (!newRecipe) { // set recipe ID.
+                for (Ingredients ing : ingredientsList)
+                    ing.put("RECIPE_ID", Integer.parseInt(recipeId));
+            }
+            ((IngredientsAdapter) this.ingredientsList.getAdapter()).setIngredientsList(ingredientsList);
+            ((IngredientsAdapter) this.ingredientsList.getAdapter()).notifyDataSetChanged();
+        }else {
+            Toast.makeText(getActivity(), "Failed to parse web page.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private class IngredientsAdapter extends ArrayAdapter<Object> {
@@ -413,6 +459,9 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             return ingredientArrayList;
         }
 
+        public void setIngredientsList(List<Ingredients> ingredientsList) {
+            this.ingredientArrayList = ingredientsList;
+        }
     }
 
     private class IngredientTextWatcher implements TextWatcher {
@@ -456,18 +505,33 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         }
     }
 
-    private static class WebpageLoader extends AsyncTaskLoader<WebsiteParser.FormattedData> {
-        public static int LOADER_ID=3;
+    private class WebpageLoader extends AsyncTask<String, Void ,WebsiteParser.FormattedData> {
         private String TAG="webpageloader";
+        private WebpageLoaderCallback wc;
 
-        public WebpageLoader(Context context) {
-            super(context);
+        public WebpageLoader(Context context, WebpageLoaderCallback wc) {
+            super();
+            this.wc = wc;
+
         }
 
         @Override
-        public WebsiteParser.FormattedData loadInBackground() {
-            Log.d(TAG, "Loading webpage.");
-            return null;
+        protected WebsiteParser.FormattedData doInBackground(String... params) {
+            Log.d(TAG, params[0]);
+            WebsiteParser wp = new WebsiteParser();
+            WebsiteParser.FormattedData result = wp.parseSite(params[0]);
+            return result;
+
         }
+
+        @Override
+        protected void onPostExecute(WebsiteParser.FormattedData result) {
+            super.onPostExecute(result);
+            if (result != null)
+                wc.webpadeLoadFinished(result.recipe, result.ingredients);
+            else
+                wc.webpadeLoadFinished(null, new ArrayList<Ingredients>());
+        }
+
     }
 }

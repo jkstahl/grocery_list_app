@@ -15,8 +15,6 @@ public class Ingredients extends Packager {
         this();
         put("NAME", name);
         put("RECIPE_ID", recipeId);
-        put("QUANTITY", quantity);
-        put("UNITS", units);
         put("USE_IN_LIST", true);
         put("TIMESTAMP", 10);
     }
@@ -24,9 +22,14 @@ public class Ingredients extends Packager {
     public Ingredients(String name) {
         super();
         put("NAME", name);
+        put("USE_IN_LIST", true);
     }
 
-    public Ingredients() {super();}
+    public Ingredients() {
+        super();
+        put("USE_IN_LIST", true);
+
+    }
 
     @Override
     public String getTableName() {
