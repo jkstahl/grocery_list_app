@@ -148,8 +148,42 @@ public class WebsiteParserTest {
         ingredientExpect.add(new Ingredients("6 oz shredded part-skim mozzarella cheese"));
         for (int i=0; i<fd.ingredients.size(); i++)
             assertEquals(fd.ingredients.get(i), ingredientExpect.get(i));
+        recipeExpect.put("NAME", "Baked Ziti with Turkey Sausage");
+        recipeExpect.put("INSTRUCTIONS",
+                "Position the rack in the center of the oven and preheat the oven to 350°F.\n" +
+                        "Crumble the sausage meat into a large saucepan and brown over medium heat, stirring often, about 4 minutes.\n" +
+                        "Drain off any fat, then add the onion and bell pepper. Cook, stirring often, until softened, about 3 minutes.\n" +
+                        "Stir in the tomatoes, peas, tomato paste, oregano, basil, thyme, fennel seeds, salt and pepper. Bring to a simmer, then reduce the heat and cook uncovered 5 minutes, stirring often.\n" +
+                        "Stir in the cooked pasta and half the cheese. Spread evenly into a 9- X 13-inch baking pan. Top evenly with the remaining cheese.\n" +
+                        "Bake until the cheese has melted and the casserole is bubbling, about 20 minutes. Let stand 10 minutes at room temperature before slicing into 8 pieces. Yields 1 piece per serving.\n");
+        recipeExpect.put("SERVINGS", 8);
+        assertEquals(recipeExpect,fd.recipe);
 
-
+        fd = wp.parseSite("https://www.weightwatchers.com/us/recipe/cashew-chicken-1/5626a5eca6d5b396106fe961");
+        ingredientExpect = new ArrayList<Ingredients>();
+        ingredientExpect.add(new Ingredients("2 tsp peanut oil"));
+        ingredientExpect.add(new Ingredients("2 clove(s) garlic clove(s), minced"));
+        ingredientExpect.add(new Ingredients("1 pound(s) uncooked boneless skinless chicken breast(s), cut into 1-inch cubes"));
+        ingredientExpect.add(new Ingredients("1/2 tsp table salt, or more to taste"));
+        ingredientExpect.add(new Ingredients("1/4 tsp black pepper, or more to taste"));
+        ingredientExpect.add(new Ingredients("1 1/2 cup(s) fat-free reduced sodium chicken broth, divided"));
+        ingredientExpect.add(new Ingredients("2 Tbsp low sodium soy sauce, or more to taste"));
+        ingredientExpect.add(new Ingredients("2 rib(s) uncooked celery, chopped"));
+        ingredientExpect.add(new Ingredients("8 oz canned bamboo shoots, drained"));
+        ingredientExpect.add(new Ingredients("8 oz canned water chestnut(s), sliced, drained"));
+        ingredientExpect.add(new Ingredients("1 1/2 Tbsp cornstarch"));
+        ingredientExpect.add(new Ingredients("2 cup(s) cooked white rice, kept hot"));
+        ingredientExpect.add(new Ingredients("1 3/4 oz unsalted dry-roasted cashews, chopped (about 6 Tbsp)"));
+        for (int i=0; i<fd.ingredients.size(); i++)
+            assertEquals(fd.ingredients.get(i), ingredientExpect.get(i));
+        recipeExpect.put("NAME", "Cashew Chicken");
+        recipeExpect.put("INSTRUCTIONS",
+                "Heat oil in a large skillet over medium-high heat. Add garlic and cook for 30 seconds. Season chicken on both sides with salt and pepper and add to skillet. Cook until browned on all sides, stirring frequently, about 4 minutes.\n" +
+                        "Add 1 cup of broth, soy sauce, celery, bamboo shoots and water chestnuts to chicken and bring to a simmer. Reduce heat to low, cover and simmer until chicken is cooked through, about 5 minutes.\n" +
+                        "Dissolve cornstarch in remaining 1/2 cup of broth; add to skillet and simmer until sauce thickens, stirring constantly, about 1 minute.\n" +
+                        "To serve, divide rice among 4 shallow dishes. Spoon chicken mixture onto rice and sprinkle with cashews. Yields about 1 cup of chicken, 1/2 cup of rice and 1 1/2 tablespoons of cashews per serving.\n");
+        recipeExpect.put("SERVINGS", 4);
+        assertEquals(recipeExpect,fd.recipe);
     }
 
 
