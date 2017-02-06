@@ -138,10 +138,12 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
 
     private class RecipeListAdapter extends CursorAdapter {
         private Cursor listCursor;
+        private ImageLoadingFactory imageLoadingFactory;
 
         public RecipeListAdapter(Cursor cursor) {
             super(getActivity(), cursor, 0);
             listCursor = cursor;
+            imageLoadingFactory = new ImageLoadingFactory(getActivity());
 
         }
         @Override
@@ -173,12 +175,12 @@ public class RecipeSearchFragment extends Fragment implements LoaderManager.Load
             recipeName.setText(cursor.getString(cursor.getColumnIndex("NAME")));
 
             ImageView imageView = (ImageView) view.findViewById(R.id.recipe_image);
-            byte[] imageRaw = (byte[])cursor.getBlob(cursor.getColumnIndex("THUMBNAIL"));
-            Log.d(TAG, "Image Size: " + imageRaw.length);
+            //byte[] imageRaw = (byte[])cursor.getBlob(cursor.getColumnIndex("THUMBNAIL"));
+            //Log.d(TAG, "Image Size: " + imageRaw.length);
 
-            Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
-            imageBitmap = ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT);
-            imageView.setImageBitmap(imageBitmap);
+            //Bitmap imageBitmap = DbBitmapUtility.getImage(getActivity(), imageRaw);
+            //imageBitmap = ThumbnailUtils.extractThumbnail(imageBitmap, DbBitmapUtility.THUMBNAIL_WIDTH, DbBitmapUtility.THUMBNAIL_HEIGHT);
+            imageLoadingFactory.loadBitmap(cursor.getInt(cursor.getColumnIndex("_id")), cursor, cursor.getColumnIndex("THUMBNAIL"), imageView);
         }
 
 

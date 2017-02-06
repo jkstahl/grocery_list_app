@@ -2,17 +2,10 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Ok"
-        android:id="@+id/menu_item_ok"
-        android:showAsAction="ifRoom"/>
-    <item android:title="Cancel"
-        android:id="@+id/menu_item_cancel"
-        android:showAsAction="ifRoom" />
     <item android:title="Done"
         android:id="@+id/done_menu_item"
         android:showAsAction="ifRoom" />
     <item android:title="Edit"
         android:id="@+id/edit_menu_item"
-        android:showAsAction="never" />
-
+        android:showAsAction="ifRoom" />
 </menu>

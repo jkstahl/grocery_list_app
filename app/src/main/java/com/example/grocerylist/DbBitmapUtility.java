@@ -23,6 +23,8 @@ public class DbBitmapUtility {
     public static int THUMBNAIL_HEIGHT=300;
     public static int THUMBNAIL_WIDTH=300;
 
+    private static Bitmap loadingImage=null;
+
     public static Bitmap getBitmap(Context context, Bitmap image, String resource) {
         Matrix matrix = new Matrix();
         ExifInterface exifReader;
@@ -63,22 +65,30 @@ public class DbBitmapUtility {
     }
 
     // convert from bitmap to byte array
-        public static byte[] getBytes(Bitmap bitmap) {
-            bitmap = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
+    public static byte[] getBytes(Bitmap bitmap) {
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, DbBitmapUtility.IMAGE_WIDTH, DbBitmapUtility.IMAGE_HIEGHT );
 
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
-            return stream.toByteArray();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(Context context, byte[] image) {
+
+        if (image == null || image.length <= 1)
+            return BitmapFactory.decodeResource(context.getResources(), R.drawable.no_image_box);
+        else
+            return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+    public static Bitmap getLoadingImage(Context context) {
+        if (loadingImage == null) {
+            loadingImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.loading_image);
+            loadingImage = Bitmap.createScaledBitmap(loadingImage, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, true);
+            return loadingImage;
+        } else {
+            return loadingImage;
         }
-
-        // convert from byte array to bitmap
-        public static Bitmap getImage(Context context, byte[] image) {
-
-            if (image == null || image.length <= 1)
-                return BitmapFactory.decodeResource(context.getResources(), R.drawable.no_image_box);
-            else
-                return BitmapFactory.decodeByteArray(image, 0, image.length);
-        }
-
-
+    }
 }

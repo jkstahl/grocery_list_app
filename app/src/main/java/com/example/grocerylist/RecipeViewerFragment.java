@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -110,6 +111,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     String recipeListId = data.getStringExtra("RECIPE_LIST_ID");
                     Log.d(TAG, "Recieved list id: " + recipeListId);
                     productDatabase.deleteIngredientsWithId(recipeListId);
+                    productDatabase.deleteRecipeListItem(recipeListId);
                     callbackRefresh.refreshProductList();
                     addIngredientsToList(recipeId, newRecipeListId);
                     refreshRecipeList();
@@ -129,8 +131,9 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     if (data.hasExtra("NEW_RECIPE_NAME")) {
                         RecipeList rl  = new RecipeList(Integer.parseInt(listId), Integer.parseInt(data.getStringExtra("RECIPE_ID")), data.getStringExtra("DAY"));
                         recipeListId =  "" + productDatabase.addEntryToDatabase(rl);
-                    } else {
+                    } else { // this was an edit to a recipe
                         recipeListId = data.getStringExtra("RECIPE_LIST_ID");
+                        //productDatabase.getIngredientsFromRecipeListId(recipeListId);
                     }
                     String recipeId = data.getStringExtra("RECIPE_ID");
                     productDatabase.deleteIngredientsWithId(recipeListId);

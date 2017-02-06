@@ -45,15 +45,17 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/delete_recipe_button" />
+        android:id="@+id/delete_recipe_button"
+        android:elevation="0dp" />
 
     <ImageButton
         android:src="@android:drawable/ic_menu_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/delete_recipe_button"
-        android:layout_toStartOf="@+id/delete_recipe_button"
-        android:id="@+id/recipe_search" />
+        android:id="@+id/recipe_search"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/delete_recipe_button"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

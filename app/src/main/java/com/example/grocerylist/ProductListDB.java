@@ -536,4 +536,6 @@ public class ProductListDB extends SQLiteOpenHelper {
         // remove recipes
         db.delete(RecipeList.RECIPE_LIST_TABLE, "LIST_ID="+listId, null);
     }
+
+
 }

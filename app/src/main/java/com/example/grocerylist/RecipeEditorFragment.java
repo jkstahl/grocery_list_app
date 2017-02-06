@@ -59,25 +59,47 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
     private Bitmap recipeImageBitmap=null;
     private ProductUnitExtractor unitExtractor;
     private RecipeEditorFragment thisActivity=null;
+    private ImageButton editButton;
+    private Menu menu;
 
     private TextView recipeName;
     private EditText instructions;
     private EditText description;
     private EditText servings;
+    private EditText urlEdit=null;
+    private boolean editMode=true;
 
-    private boolean editMode;
+    public void setMenuVisibility() {
+        if (menu != null) {
+            ((MenuItem) menu.findItem(R.id.menu_item_ok)).setVisible(editMode);
+            ((MenuItem) menu.findItem(R.id.menu_item_cancel)).setVisible(editMode);
+            ((MenuItem) menu.findItem(R.id.done_menu_item)).setVisible(!editMode);
+            ((MenuItem) menu.findItem(R.id.edit_menu_item)).setVisible(!editMode);
+        }
+    }
 
     public void setEditAble(){
         recipeName.setFocusable(editMode);
         instructions.setFocusable(editMode);
         description.setFocusable(editMode);
         servings.setFocusable(editMode);
+        urlEdit.setEnabled(editMode);
 
         recipeName.setFocusableInTouchMode(editMode);
         instructions.setFocusableInTouchMode(editMode);
         description.setFocusableInTouchMode(editMode);
         servings.setFocusableInTouchMode(editMode);
 
+        // menu
+        setMenuVisibility();
+
+
+        if (editMode) {
+            editButton.setVisibility(ImageButton.INVISIBLE);
+
+        } else {
+
+        }
     }
 
     @Override
@@ -145,7 +167,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
 
         Log.d(TAG, "Id is " + recipeId);
 
-        final EditText urlEdit = (EditText) rootView.findViewById(R.id.url_edit_text);
+        urlEdit = (EditText) rootView.findViewById(R.id.url_edit_text);
         if (recipe.get("URL") != null && !recipe.get("URL").equals("")){
             urlEdit.setText((String) recipe.get("URL"));
         }
@@ -156,6 +178,22 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                 wl.execute(urlEdit.getText().toString());
             }
         });
+
+        ((Button) rootView.findViewById(R.id.url_open_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlEdit.getText().toString().trim()));
+                startActivity(browserIntent);
+            }
+        });
+
+        ((ImageButton) rootView.findViewById(R.id.recipe_edit_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            setEditMode(true);
+            }
+        });
+editButton = (ImageButton) rootView.findViewById(R.id.recipe_edit_button);
 
         recipe.setView("NAME", recipeName);
         recipe.setView("INSTRUCTIONS", instructions);
@@ -208,6 +246,8 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         // Inflate the menu items for use in the action bar
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recipe_edit_menu, menu);
+        this.menu = menu;
+        setMenuVisibility();
     }
 
     @Override
@@ -259,10 +299,15 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
                     getActivity().finish();
                 }
                 return true;
+            case R.id.edit_menu_item:
+                setEditMode(true);
+                return true;
+            case R.id.done_menu_item:
             case R.id.menu_item_cancel:
                 getActivity().setResult(RecipeEditorActivity.CANCEL, getActivity().getIntent());
                 getActivity().finish();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -311,6 +356,12 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         }else {
             Toast.makeText(getActivity(), "Failed to parse web page.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+        setEditAble();
+        getLoaderManager().restartLoader(2, null, thisActivity);
     }
 
     private class IngredientsAdapter extends ArrayAdapter<Object> {
