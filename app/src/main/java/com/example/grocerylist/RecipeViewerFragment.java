@@ -1,7 +1,9 @@
 package com.example.grocerylist;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -147,25 +151,91 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
         }
     }
 
+    private List<Integer> getIngredientsToAdd(String[] recipeIngredients, boolean[] isSelected, Product[] newProductList){
+        ArrayAdapter<String> adp = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_multiple_choice, recipeIngredients);
+        final List<Integer> selectedList = new ArrayList<>();
+        ListView lv = new ListView(getActivity());
+        lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        lv.setAdapter(adp);
+        final Product[] np = newProductList;
+
+        for (int i=0; i<isSelected.length; i++)
+            if (isSelected[i])
+                selectedList.add(i);
+
+        AlertDialog.Builder bldr = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle);
+        bldr.setTitle("Select Ingredients to Add");
+        //bldr.setMessage("Select Ingredients to Add");
+        //bldr.setView(lv);
+        bldr.setPositiveButton("Done",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "Ok clicked.");
+                        for (Integer index : selectedList) {
+                            //Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+                            productDatabase.addEntryToDatabase(np[index]);
+                        }
+                        callbackRefresh.refreshProductList();
+                    }
+                });
+        bldr.setMultiChoiceItems(recipeIngredients, isSelected ,new DialogInterface.OnMultiChoiceClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                if (isChecked) {
+                    selectedList.add(which);
+                } else {
+                    selectedList.remove(Integer.valueOf(which));
+                }
+            }
+        });
+        bldr.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "Cancel clicked.");
+                    }
+                });
+
+        final Dialog dlg = bldr.create();
+        dlg.show();
+        return selectedList;
+    }
+
     private void addIngredientsToList(String recipeId, String recipeListId) {
         Cursor ingredientForRecipeCursor = productDatabase.getIngredientsForRecipe(recipeId);
+        String[] ingredientsList = new String[ingredientForRecipeCursor.getCount()];
+        boolean[] selectedArray = new boolean[ingredientForRecipeCursor.getCount()];
+        Product[] newProductList = new Product[ingredientForRecipeCursor.getCount()];
 
         if (ingredientForRecipeCursor.moveToFirst()) {
             Log.d("ingredientsadd", "Found ingredients for recipe " + recipeId + ". Adding to list.");
+            int i =0;
             do {
                 int useInList = (int) ingredientForRecipeCursor.getInt(ingredientForRecipeCursor.getColumnIndex("USE_IN_LIST"));
-                if (useInList != 0) {
                     String ingredientName = ingredientForRecipeCursor.getString(ingredientForRecipeCursor.getColumnIndex("NAME"));
-
                     Log.d("ingredientsadd", "Adding " + ingredientName + " to list.");
-
                     ProductUnitExtractor.QuantityUnitPackage formattedProoduct = unitExtractor.getUnitsProductFromString(ingredientName);
+                    selectedArray[i] = false;
+                if (useInList != 0) {
+                    selectedArray[i] = true;
                     // TODO figure out category
-                    Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
-                    productDatabase.addEntryToDatabase(newProduct);
+                    //Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+                    //productDatabase.addEntryToDatabase(newProduct);
                 }
+                Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+                newProductList[i] = newProduct;
+                ingredientsList[i] = formattedProoduct.product;
+                i++;
             } while (ingredientForRecipeCursor.moveToNext());
-            callbackRefresh.refreshProductList();
+
+            List<Integer> selected =  getIngredientsToAdd(ingredientsList, selectedArray, newProductList);
+            //for (Integer index : selected) {
+                //Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+            //    productDatabase.addEntryToDatabase(newProductList[index]);
+            //}
+            Log.d(TAG, "Added dialogue done.");
         }
     }
 
