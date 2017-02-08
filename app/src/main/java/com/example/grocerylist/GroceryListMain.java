@@ -3,6 +3,7 @@ package com.example.grocerylist;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 
 /**
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
  */
 public class GroceryListMain extends AbstractActivityHolder {
 	private GListFragment listFragment;
+	private final String TAG="grocerylistmain";
 
 
 	@Override
@@ -27,6 +29,7 @@ public class GroceryListMain extends AbstractActivityHolder {
 	@Override
 	public void onResume() {
 		super.onResume();
+		Log.d(TAG, "Resumed main screen.");
 		if (listFragment != null)
 			listFragment.updateList();
 	}

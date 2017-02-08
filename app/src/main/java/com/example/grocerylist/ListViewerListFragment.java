@@ -288,6 +288,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 		@Override
 		protected Cursor loadCursor() {
+			
 			return productDatabase.getProdsFromList(listId);
 		}
 	}
