@@ -266,17 +266,17 @@ public class ProductListDB extends SQLiteOpenHelper {
      */
     public Cursor getProdsFromList(GList glist) {
 
-        return getProdsFromList("" + glist.get("_id"));
+        return getProdsFromList("" + glist.get("_id"), "CHECK_OUT ASC");
     }
 
     
-    public Cursor getProdsFromList(String getID) {
+    public Cursor getProdsFromList(String getID, String sort) {
     	//Cursor cursor = db.rawQuery(SQLStatement, null);
     	SQLiteDatabase db = this.getWritableDatabase();
     	Cursor cursor = db.query(Product.TABLE_PRODUCTS,
                 Product.PRODUCT_COLUMNS,
     			"LIST_ID=" + getID,
-    			null, null, null, "CHECK_OUT ASC");
+    			null, null, null, sort);
         
         Log.d("management", "Generated list of products from list based on SQL " /*+ SQLStatement*/);
         

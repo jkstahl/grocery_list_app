@@ -25,10 +25,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class ListViewerListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>  {
@@ -131,14 +137,16 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d("actions", "Clicked Item " + position);
-		//Log.d("actions", "ID is " + ((ListOProdsCursorWrapper) l.getAdapter().getItem(position)).getGList().get("_id"));
-		//DatabaseHolder.getDatabase(getActivity()).getProductsFromList(glist)
-		Product wp = (Product) ((WorkingProductCursorWrapper) adapter.getItem(position)).getWorkingProduct();
-		ProductPackager pp = new ProductPackager(wp.getValuesContainer());
-		Log.d("actions", "working product name " + ((String)wp.get("NAME")));
-		Intent i = pp.getIntent(getActivity(), ProductEditActivity.class);
+		if (adapter.items.get(position) instanceof Product) {
+			//Log.d("actions", "ID is " + ((ListOProdsCursorWrapper) l.getAdapter().getItem(position)).getGList().get("_id"));
+			//DatabaseHolder.getDatabase(getActivity()).getProductsFromList(glist)
+			Product wp = (Product) adapter.items.get(position);
+			ProductPackager pp = new ProductPackager(wp.getValuesContainer());
+			Log.d("actions", "working product name " + ((String) wp.get("NAME")));
+			Intent i = pp.getIntent(getActivity(), ProductEditActivity.class);
 
-		startActivityForResult(i, ProductEditActivity.ACTIVITY_ID);
+			startActivityForResult(i, ProductEditActivity.ACTIVITY_ID);
+		}
 		//openList(listID);
 	}
 
@@ -178,7 +186,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 	@Override
 	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
-		ProductInListAdapter adapter = new ProductInListAdapter((WorkingProductCursorWrapper) data);
+		ProductInListAdapter adapter = new ProductInListAdapter(getActivity(), 0, (WorkingProductCursorWrapper) data);
 		this.adapter=adapter;
 		setListAdapter(adapter);
 	}
@@ -209,63 +217,123 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 		}
 	}
 
-	private class ProductInListAdapter extends CursorAdapter {
+	private class ProductInListAdapter extends ArrayAdapter<Object> {
+		private static final int PRODUCT_TYPE = 0;
+		private static final int CATEGORY_TYPE = 1;
+
 		private WorkingProductCursorWrapper listCursor;
+		List<Object> items;
 
-		public ProductInListAdapter(WorkingProductCursorWrapper cursor) {
-			super(getActivity(), cursor, 0);
+		@Override
+		public int getCount(){
+
+			return items.size();
+		}
+
+		@Override
+		public int getViewTypeCount() {
+			return 2;
+		}
+
+		@Override
+		public int getItemViewType(int position) {
+			if (items.get(position) instanceof String)
+				return CATEGORY_TYPE;
+			else
+				return PRODUCT_TYPE;
+		}
+
+		public ProductInListAdapter(Context context, int resource, WorkingProductCursorWrapper cursor) {
+			super(context, resource);
 			listCursor = cursor;
+			String sortColumn = "TYPE";
+			items = new ArrayList<>();
 
-		}
-		@Override
-		public boolean areAllItemsEnabled()
-		{
-			return true;
-		}
+			if (cursor.moveToFirst()) {
+				String lastCat = null;
+				int lastCheck = 0;
+				do {
+					String category = cursor.getString(cursor.getColumnIndex(sortColumn));
+					int checked = cursor.getInt(cursor.getColumnIndex("CHECK_OUT"));
+					if (checked != lastCheck) {
+						items.add("Checked Off");
+						lastCheck = checked;
+					} else if (category != null && !category.equals(lastCat) && checked == 0) {
+						items.add(category);
+						lastCat = category;
+					}
+					items.add(listCursor.getWorkingProduct());
 
-		@Override
-		public boolean isEnabled(int arg0)
-		{
-			return true;
-		}
-
-		@Override
-		public View newView (Context context, Cursor cursor, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View view = inflater.inflate(R.layout.list_prod_item, parent, false);
-
-			//View view = getActivity().getLayoutInflater().inflate(R.layout.list_prod_item, null);
-
-			return view;
-		}
-
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			Product wp =listCursor.getWorkingProduct();
-
-			TextView tv = (TextView) view.findViewById(R.id.g_list_name);
-			tv.setText((String) wp.get("NAME"));
-			tv = (TextView) view.findViewById(R.id.text_listi_quantity);
-			float quantity = (Float) wp.get("QUANTITY");
-			String units = (String) wp.get("UNITS");
-			TextView unitsView = (TextView) view.findViewById(R.id.text_listi_units);
-			if (quantity == 1 && (units.equals("each") || units.equals(""))) {
-				tv.setText("");
-				unitsView.setText("");
-			} else {
-				tv.setText("" + quantity);
-				unitsView.setText(units);
+				} while (cursor.moveToNext());
 			}
+			Log.d(TAG, "Items List: " + items.toString());
+		}
 
-			CheckBox cb = (CheckBox) view.findViewById(R.id.check_out_box);
-			Log.d("management", "checkout id " + wp.get("_id") + " is " + wp.get("CHECK_OUT"));
-			//cb.setSelected(p.get("CHECK_OUT").equals("TRUE"));
-			cb.setOnCheckedChangeListener(null);
-			cb.setChecked((Boolean) wp.get("CHECK_OUT"));
+		@Override
+		public boolean areAllItemsEnabled() {
+			return true;
+		}
 
-			//cb.setOnCheckedChangeListener(new CheckoutListener((Integer) wp.get("_id")));
-			cb.setOnClickListener(new CheckoutListener((Integer) wp.get("_id")));
+		@Override
+		public boolean isEnabled(int arg0) {
+			return true;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			int itemType = getItemViewType(position);
+			int itemTag = 0;
+			if (convertView != null)
+				itemTag = (Integer) convertView.getTag();
+
+			if (convertView == null || itemTag != itemType) {
+				//LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				switch (itemType) {
+					case PRODUCT_TYPE:
+						convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_prod_item, parent, false);
+						convertView.setTag(PRODUCT_TYPE);
+						break;
+					case CATEGORY_TYPE:
+						convertView = LayoutInflater.from(getContext()).inflate(R.layout.product_category, parent, false);
+						convertView.setTag(CATEGORY_TYPE);
+						break;
+				}
+			}
+			switch (itemType) {
+				case PRODUCT_TYPE:
+					Product wp = (Product) items.get(position);
+
+					TextView tv = (TextView) convertView.findViewById(R.id.g_list_name);
+					tv.setText((String) wp.get("NAME"));
+					tv = (TextView) convertView.findViewById(R.id.text_listi_quantity);
+					float quantity = (Float) wp.get("QUANTITY");
+					String units = (String) wp.get("UNITS");
+					TextView unitsView = (TextView) convertView.findViewById(R.id.text_listi_units);
+					if (quantity == 1 && (units.equals("each") || units.equals(""))) {
+						tv.setText("");
+						unitsView.setText("");
+					} else {
+						tv.setText("" + quantity);
+						unitsView.setText(units);
+					}
+
+					CheckBox cb = (CheckBox) convertView.findViewById(R.id.check_out_box);
+					Log.d("management", "checkout id " + wp.get("_id") + " is " + wp.get("CHECK_OUT"));
+					//cb.setSelected(p.get("CHECK_OUT").equals("TRUE"));
+					cb.setOnCheckedChangeListener(null);
+					cb.setChecked((Boolean) wp.get("CHECK_OUT"));
+
+					//cb.setOnCheckedChangeListener(new CheckoutListener((Integer) wp.get("_id")));
+					cb.setOnClickListener(new CheckoutListener((Integer) wp.get("_id")));
+					break;
+				case CATEGORY_TYPE:
+					String categoryName = (String) items.get(position);
+					TextView categoryLabel = (TextView) convertView.findViewById(R.id.category_label);
+					categoryLabel.setText(categoryName);
+					break;
+
+			}
+			return convertView;
 		}
 	}
 
@@ -288,8 +356,8 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 		@Override
 		protected Cursor loadCursor() {
-			
-			return productDatabase.getProdsFromList(listId);
+			String filter="TYPE";
+			return productDatabase.getProdsFromList(listId, "CHECK_OUT ASC, " + filter + " ASC, NAME ASC");
 		}
 	}
 	
