@@ -8,6 +8,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 25
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -19,7 +20,9 @@ android {
 }
 
 repositories { jcenter() }
-dependencies { testCompile "org.mockito:mockito-android:2.+" }
+dependencies {
+    testCompile "org.robolectric:robolectric:3.2.2"
+}
 
 dependencies {
     compile 'com.android.support:support-v4:25.1.0'
