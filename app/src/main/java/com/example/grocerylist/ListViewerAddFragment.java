@@ -99,7 +99,8 @@ public class ListViewerAddFragment extends Fragment {
 		Log.d(TAG, qup.product);
 
 		Log.d("debug", "Product id received " + newProduct);
-		Product newList =  new Product(listId, qup.product, "Uncategorized", (float) qup.quantity, qup.units, false);
+		String category = ProductCategoryFinder.getCategoryFromProductName(getActivity(), qup.product);
+		Product newList =  new Product(listId, qup.product, category, (float) qup.quantity, qup.units, false);
 		// add product to the database
 		productDatabase.addEntryToDatabase(newList);
 		listViewer.updateList();

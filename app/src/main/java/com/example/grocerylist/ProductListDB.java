@@ -2,6 +2,7 @@ package com.example.grocerylist;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -20,9 +21,10 @@ public class ProductListDB extends SQLiteOpenHelper {
 
 	
 	public static final String DATABASE_NAME = "grocery_list_2013.db";
-	public static final int DATABASE_VERSION = 30;
+	public static final int DATABASE_VERSION = 31;
     private List<TableMap> tables;
     private final String TAG="database";
+    private Context context;
     // If we update add new columns and tables if needed to database.
 	
 	public ProductListDB(Context context) {
@@ -33,12 +35,33 @@ public class ProductListDB extends SQLiteOpenHelper {
         tables.add(new Recipe());
         tables.add(new RecipeList());
         tables.add(new Ingredients());
+        tables.add(new ProductExamples());
+        this.context=context;
 	}
-	
+
+    public void addExamples(SQLiteDatabase db) {
+        Resources res = context.getResources();
+        String[] examaple_lis = res.getStringArray(R.array.product_example_list);
+        String type = "Uncategorized";
+        for (int i=0; i<examaple_lis.length; i++ ) {
+            if (examaple_lis[i].startsWith("`")) {
+                type = examaple_lis[i].substring(1);
+            } else {
+                ContentValues cv = new ContentValues();
+                cv.put("NAME", examaple_lis[i].toLowerCase());
+                cv.put("TYPE", type);
+                db.insert(ProductExamples.TABLE_NAME, null, cv);
+            }
+        }
+    }
+
 	@Override
 	public void onCreate(SQLiteDatabase db) {
         for (TableMap table : tables)
             db.execSQL(table.getTableCreatString());
+
+        addExamples(db);
+
         //db.execSQL((new Product()).getTableCreatString());
         //db.execSQL((new GList()).getTableCreatString());
         //db.execSQL((new Recipe()).getTableCreatString());
@@ -101,12 +124,14 @@ public class ProductListDB extends SQLiteOpenHelper {
         for (TableMap table: tables) {
             String defTableName = table.getTableName();
 
-            //if (!tableNames.contains(defTableName)) {
-            //    db.execSQL(table.getTableCreatString());
-            //}
-            copyTable(db, defTableName, table);
+            if (tableNames.contains(defTableName))
+                copyTable(db, defTableName, table);
+            else
+                db.execSQL(table.getTableCreatString());
 
         }
+        clearTable(db, ProductExamples.TABLE_NAME);
+        addExamples(db);
 
 	}
 
@@ -337,6 +362,9 @@ public class ProductListDB extends SQLiteOpenHelper {
         return rowId;
     }
 
+    public void clearTable(SQLiteDatabase db, String tableName) {
+        db.delete(tableName, null, null);
+    }
 
 	public void clearAllTables() {
         Log.d("management", "Clearing entried in DB" /*+ SQLStatement*/);
@@ -538,4 +566,17 @@ public class ProductListDB extends SQLiteOpenHelper {
     }
 
 
+    public Cursor getMostCommonCategory(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c =  db.rawQuery("SELECT temp.TYPE, COUNT(temp.TYPE) TYPE_OCCURANCE FROM (SELECT NAME, TYPE FROM PRODUCTS UNION ALL SELECT NAME, TYPE FROM PRODUCT_EXAMPLES) AS temp WHERE NAME=? GROUP BY temp.TYPE ORDER BY TYPE_OCCURANCE DESC LIMIT 1", new String[]{name});
+        printAll(c);
+        return c;
+    }
+
+    public Cursor getMostCommonCategoryFromExamples(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c =  db.rawQuery("SELECT TYPE, COUNT(TYPE) TYPE_OCCURANCE FROM " + ProductExamples.TABLE_NAME + " WHERE NAME=? GROUP BY TYPE ORDER BY TYPE_OCCURANCE DESC LIMIT 1", new String[]{name});
+        printAll(c);
+        return c;
+    }
 }

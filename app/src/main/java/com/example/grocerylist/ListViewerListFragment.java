@@ -85,10 +85,10 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 						ProductInListAdapter adapter = (ProductInListAdapter)getListAdapter();
 						String whereString = "";
 						String orString = " or ";
-						for (int i = adapter.getCount() - 1; i >= 0; i--) {
+						for (int i = adapter.items.size() - 1; i >= 0; i--) {
 
 							if (getListView().isItemChecked(i)) {
-								Product wp = (Product) ((WorkingProductCursorWrapper) adapter.getItem(i)).getWorkingProduct();
+								Product wp = (Product) adapter.items.get(i);
 								whereString += "_id=" + wp.get("_id")  + orString;
 							}
 						}
