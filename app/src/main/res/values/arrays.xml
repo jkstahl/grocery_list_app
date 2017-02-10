@@ -73,7 +73,6 @@
         <item>Jalapeno</item>
         <item>Lemons</item>
         <item>Limes</item>
-        <item>Mixed Whole fruit - bag</item>
         <item>Mushrooms</item>
         <item>Musk Melon</item>
         <item>Nectarines</item>
@@ -95,11 +94,12 @@
         <item>Sweet Potatoes</item>
         <item>Yams</item>
         <item>Tomatoes</item>
-        <item>Vandalia Onions</item>
+        <item>Vandalia Onion</item>
         <item>Watermelon</item>
         <item>White Onions</item>
         <item>Yellow Bell Peppers</item>
         <item>Yellow Onion</item>
+        <item>Onion</item>
         <item>Yellow Squash</item>
         <item>Zucchini</item>
         <item>Apple</item>
@@ -111,6 +111,7 @@
         <item>Peach</item>
         <item>Pineapple</item>
         <item>Plum</item>
+        <item>Cilantro</item>
 
 
         <item>`Beer, Wine &amp; Liquor</item>

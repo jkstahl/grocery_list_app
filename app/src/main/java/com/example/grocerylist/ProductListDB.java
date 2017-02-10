@@ -397,14 +397,11 @@ public class ProductListDB extends SQLiteOpenHelper {
     public List<String> getFilteredProducts(String constraint) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-//        Cursor cursor = db.query(true, Product.TABLE_PRODUCTS,
-//                new String[]{"NAME"},
-//                "NAME LIKE '%" + constraint + "%'",
-//                null, null, null, null, null);
-        Cursor cursor = db.query(true, Product.TABLE_PRODUCTS,
-                new String[]{"NAME"},
-                "NAME LIKE ?",
-                new String[] {"%"+constraint+"%"}, null, null, null, null);
+
+        Cursor cursor = db.query("(SELECT NAME FROM PRODUCTS UNION ALL SELECT NAME FROM PRODUCT_EXAMPLES) AS temp",
+                new String[]{"temp.NAME, COUNT(temp.NAME) AS NAME_COUNT"},
+                "temp.NAME LIKE ?",
+                new String[] {"%"+constraint+"%"}, "temp.NAME", null, "NAME_COUNT DESC", "15");
 
         List<String> filteredProducts = new ArrayList<String>();
         if (cursor.moveToFirst()) {
@@ -568,7 +565,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
     public Cursor getMostCommonCategory(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c =  db.rawQuery("SELECT temp.TYPE, COUNT(temp.TYPE) TYPE_OCCURANCE FROM (SELECT NAME, TYPE FROM PRODUCTS UNION ALL SELECT NAME, TYPE FROM PRODUCT_EXAMPLES) AS temp WHERE NAME=? GROUP BY temp.TYPE ORDER BY TYPE_OCCURANCE DESC LIMIT 1", new String[]{name});
+        Cursor c =  db.rawQuery("SELECT temp.TYPE, COUNT(temp.TYPE) TYPE_OCCURANCE FROM (SELECT NAME, TYPE FROM PRODUCTS UNION ALL SELECT NAME, TYPE FROM PRODUCT_EXAMPLES) AS temp WHERE NAME LIKE ? GROUP BY temp.TYPE ORDER BY TYPE_OCCURANCE DESC LIMIT 1", new String[]{name});
         printAll(c);
         return c;
     }
@@ -576,6 +573,13 @@ public class ProductListDB extends SQLiteOpenHelper {
     public Cursor getMostCommonCategoryFromExamples(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c =  db.rawQuery("SELECT TYPE, COUNT(TYPE) TYPE_OCCURANCE FROM " + ProductExamples.TABLE_NAME + " WHERE NAME=? GROUP BY TYPE ORDER BY TYPE_OCCURANCE DESC LIMIT 1", new String[]{name});
+        //printAll(c);
+        return c;
+    }
+
+    public Cursor getAllUniqueProducts() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c =  db.rawQuery("SELECT temp.NAME, temp.TYPE, COUNT(temp.NAME) NAME_OCCURANCE FROM (SELECT NAME, TYPE FROM PRODUCTS UNION ALL SELECT NAME, TYPE FROM PRODUCT_EXAMPLES) AS temp GROUP BY temp.NAME ORDER BY NAME_OCCURANCE DESC", null);
         printAll(c);
         return c;
     }

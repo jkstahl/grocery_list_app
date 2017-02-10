@@ -220,11 +220,12 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     selectedArray[i] = false;
                 if (useInList != 0) {
                     selectedArray[i] = true;
-                    // TODO figure out category
+                    // figure out category
                     //Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
                     //productDatabase.addEntryToDatabase(newProduct);
                 }
-                Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+                String category = ProductCategoryFinder.getCategoryFromProductName(getActivity(), formattedProoduct.product);
+                Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, category, (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
                 newProductList[i] = newProduct;
                 ingredientsList[i] = formattedProoduct.product;
                 i++;

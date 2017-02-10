@@ -16,7 +16,7 @@ public class ProductCategoryFinder {
 
     public static String getCategoryFromProductName(Context c, String name) {
         String category = "Uncategorized";
-
+        name = name.toLowerCase();
         if (db == null)
             db = DatabaseHolder.getDatabase(c);
 
@@ -30,18 +30,19 @@ public class ProductCategoryFinder {
         }
         cursor.close();
 
-        // Next check the preloaded common.
-        // Check past  uses of this name first
-        /*
-        cursor = db.getMostCommonCategoryFromExamples(name);
-        if (cursor.moveToFirst()) {
-            String returnCategory = cursor.getString(cursor.getColumnIndex("TYPE"));
-            Log.d(TAG, returnCategory);
-            return returnCategory;
-        }*/
-
-
         // Find if any are close
+        // find if any of the products already selected are a subset
+        cursor = db.getAllUniqueProducts();
+        if (cursor.moveToFirst()) {
+            do {
+                String testName = cursor.getString(cursor.getColumnIndex("NAME"));
+                if (name.contains(testName.toLowerCase())) {
+                    String type  = cursor.getString(cursor.getColumnIndex("TYPE"));
+                    Log.d(TAG, "Returning type: " + type);
+                    return type;
+                }
+            } while (cursor.moveToNext());
+        }
 
         return category;
     }
