@@ -84,7 +84,9 @@ public class WebsiteParser {
             URL url = new URL(webpage);
             urlConnection = (HttpURLConnection) url.openConnection();
         } catch (Exception e) {
+
             e.printStackTrace();
+            return null;
         }
 
         try {
@@ -169,6 +171,12 @@ public class WebsiteParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            try {
+                urlConnection.disconnect();
+            } catch (Exception e2) {
+
+            }
+            return null;
         } finally {
             urlConnection.disconnect();
         }

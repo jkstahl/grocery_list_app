@@ -116,4 +116,5 @@
         android:id="@+id/edit_pedit_type"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

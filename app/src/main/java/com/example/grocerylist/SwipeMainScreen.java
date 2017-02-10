@@ -3,6 +3,7 @@ package com.example.grocerylist;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+
+import java.util.Map;
 
 
 /**
@@ -37,9 +40,6 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         setContentView(R.layout.swipe_main_old);
 
         // ViewPager and its adapters use support library
@@ -55,7 +55,7 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
                         // When swiping between pages, select the
                         // corresponding tab.
                         getActionBar().setSelectedNavigationItem(position);
-                        // TODO Hide keyboard
+                        // Hide keyboard
                         Log.d(TAG, "Tab selected: "+position);
                         mViewPager.getWindowToken();
                         if (position == 1)
@@ -96,11 +96,30 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
         actionBar.addTab(actionBar.newTab().setText("List").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Recipes").setTabListener(tabListener));
 
+        try {
+            if (getIntent().hasExtra("LAST_TAB"))
+                mViewPager.setCurrentItem(Integer.parseInt(getIntent().getStringExtra("LAST_TAB")));
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting last tab.");
+        }
     }
 
     @Override
     public void refreshProductList() {
         mInsideListPager.addFragment.updateList();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", getClass().getName());
+        for (String key : getIntent().getExtras().keySet())
+            editor.putString(key, (String) getIntent().getExtras().getString(key));
+        editor.putString("LAST_TAB", "" + mViewPager.getCurrentItem());
+        editor.commit();
     }
 }
 

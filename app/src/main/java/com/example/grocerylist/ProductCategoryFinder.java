@@ -20,7 +20,7 @@ public class ProductCategoryFinder {
         if (db == null)
             db = DatabaseHolder.getDatabase(c);
 
-        // Check past  uses of this name first
+        // Check past uses of this name first
         Cursor cursor = db.getMostCommonCategory(name);
         if (cursor.moveToFirst()) {
             String returnCategory = cursor.getString(cursor.getColumnIndex("TYPE"));

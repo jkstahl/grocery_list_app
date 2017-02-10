@@ -1,5 +1,6 @@
 package com.example.grocerylist;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -61,12 +62,16 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
     private RecipeEditorFragment thisActivity=null;
     private ImageButton editButton;
     private Menu menu;
+    private ProgressDialog progress;
 
+    // Adjustable widgets.
     private TextView recipeName;
     private EditText instructions;
     private EditText description;
     private EditText servings;
     private EditText urlEdit=null;
+    private Button importButton;
+
     private boolean editMode=true;
 
     public void setMenuVisibility() {
@@ -84,6 +89,7 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         description.setFocusable(editMode);
         servings.setFocusable(editMode);
         urlEdit.setEnabled(editMode);
+        importButton.setEnabled(editMode);
 
         recipeName.setFocusableInTouchMode(editMode);
         instructions.setFocusableInTouchMode(editMode);
@@ -165,16 +171,25 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
             this.recipeId = contextIntent.getStringExtra("RECIPE_ID");
         }
 
+
         Log.d(TAG, "Id is " + recipeId);
 
         urlEdit = (EditText) rootView.findViewById(R.id.url_edit_text);
         if (recipe.get("URL") != null && !recipe.get("URL").equals("")){
             urlEdit.setText((String) recipe.get("URL"));
         }
-        ((Button) rootView.findViewById(R.id.url_import_button)).setOnClickListener(new View.OnClickListener() {
+        importButton = ((Button) rootView.findViewById(R.id.url_import_button));
+        importButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 WebpageLoader wl = new WebpageLoader(getActivity(), thisActivity);
+
+                progress = new ProgressDialog(getActivity());
+                progress.setTitle("Loading");
+                progress.setMessage("Wait while loading...");
+                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progress.show();
+
                 wl.execute(urlEdit.getText().toString());
             }
         });
@@ -182,8 +197,13 @@ public class RecipeEditorFragment extends Fragment implements LoaderManager.Load
         ((Button) rootView.findViewById(R.id.url_open_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlEdit.getText().toString().trim()));
-                startActivity(browserIntent);
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlEdit.getText().toString().trim()));
+                    startActivity(browserIntent);
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Error opening web page.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.toString());
+                }
             }
         });
 
@@ -334,6 +354,11 @@ editButton = (ImageButton) rootView.findViewById(R.id.recipe_edit_button);
 
     @Override
     public void webpadeLoadFinished(Recipe loadedRecipe, List<Ingredients> ingredientsList) {
+        try {
+            progress.dismiss();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
         if (loadedRecipe != null) {
             Log.d(TAG, "Callback function called");
             if (!isEmpty((String) loadedRecipe.get("NAME")))
@@ -345,7 +370,7 @@ editButton = (ImageButton) rootView.findViewById(R.id.recipe_edit_button);
             if (loadedRecipe.get("SERVINGS") != null)
                 servings.setText("" + loadedRecipe.get("SERVINGS"));
 
-            if (loadedRecipe.get("THUMBNAIL") != null && ((byte[]) loadedRecipe.get("THUMBNAIL")).length > 1)
+            if (loadedRecipe.get("THUMBNAIL") != null && !(loadedRecipe.get("THUMBNAIL") instanceof String) && ((byte[]) loadedRecipe.get("THUMBNAIL")).length > 1)
                 setImage(DbBitmapUtility.getImage(getActivity(), ((byte[]) loadedRecipe.get("THUMBNAIL"))));
             if (!newRecipe) { // set recipe ID.
                 for (Ingredients ing : ingredientsList)
@@ -455,10 +480,9 @@ editButton = (ImageButton) rootView.findViewById(R.id.recipe_edit_button);
                             notifyDataSetChanged();
                         }
                     });
-                    if (editMode)
-                        deleteButton.setVisibility(Button.VISIBLE);
-                    else
-                        deleteButton.setVisibility(Button.INVISIBLE);
+
+
+
 
                     final CheckBox ingredientAdd = (CheckBox) convertView.findViewById(R.id.list_add_checkbox);
                     ingredientAdd.setOnClickListener(null);
@@ -471,6 +495,19 @@ editButton = (ImageButton) rootView.findViewById(R.id.recipe_edit_button);
                             ingredientArrayList.get(position).put("USE_IN_LIST", ((CheckBox) v).isChecked());
                         }
                     });
+
+                    // set editmode attributes
+                    name.setFocusable(editMode);
+                    name.setFocusableInTouchMode(editMode);
+
+                    if (editMode) {
+                        deleteButton.setVisibility(Button.VISIBLE);
+                        ingredientAdd.setVisibility(CheckBox.VISIBLE);
+
+                    } else {
+                        deleteButton.setVisibility(Button.INVISIBLE);
+                        ingredientAdd.setVisibility(CheckBox.INVISIBLE);
+                    }
 
                     break;
                 case EDIT_TYPE:
@@ -602,7 +639,7 @@ editButton = (ImageButton) rootView.findViewById(R.id.recipe_edit_button);
             if (result != null)
                 wc.webpadeLoadFinished(result.recipe, result.ingredients);
             else
-                wc.webpadeLoadFinished(null, new ArrayList<Ingredients>());
+                wc.webpadeLoadFinished(null, null);
         }
 
     }
