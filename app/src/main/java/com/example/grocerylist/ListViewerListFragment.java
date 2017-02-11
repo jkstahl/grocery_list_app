@@ -87,7 +87,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 						String orString = " or ";
 						for (int i = adapter.items.size() - 1; i >= 0; i--) {
 
-							if (getListView().isItemChecked(i)) {
+							if (getListView().isItemChecked(i) && !(adapter.items.get(i) instanceof String)) {
 								Product wp = (Product) adapter.items.get(i);
 								whereString += "_id=" + wp.get("_id")  + orString;
 							}
@@ -128,8 +128,10 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
             /*
              * Change Title bar to number of selection
              */
+
 				int checkedItems = getListView().getCheckedItemCount();
 				actionMode.setTitle(String.valueOf(checkedItems) + " Selected");
+
 			}
 		});
 	}
@@ -275,7 +277,10 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 		}
 
 		@Override
-		public boolean isEnabled(int arg0) {
+		public boolean isEnabled(int position) {
+			if (items.get(position) instanceof String)
+				return false;
+
 			return true;
 		}
 
