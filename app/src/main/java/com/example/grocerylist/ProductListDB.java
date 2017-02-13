@@ -588,7 +588,7 @@ public class ProductListDB extends SQLiteOpenHelper {
 
     public Cursor getAllProductRecords() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.query(Product.TABLE_PRODUCTS, new String[] {"NAME", "TYPE", "QUANTITY", "UNITS", "TIMESTAMP"},null,null,null,null,null);
+        Cursor c = db.query(Product.TABLE_PRODUCTS, new String[] {"NAME", "TYPE", "QUANTITY", "UNITS", "TIMESTAMP", "RECIPE_LIST_ID"},"typeof(RECIPE_LIST_ID)!=\"integer\"",null,null,null,null);
         return c;
     }
 

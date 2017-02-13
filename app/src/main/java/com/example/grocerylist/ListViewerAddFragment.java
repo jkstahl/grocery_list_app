@@ -1,9 +1,11 @@
 package com.example.grocerylist;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -24,14 +26,18 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
-
-public class ListViewerAddFragment extends Fragment {
+public class ListViewerAddFragment extends Fragment implements PredictorCallback{
 	//private ProductListDB productDatabase;
 	private int listId;
 	private ListViewerListFragment listViewer;
@@ -71,6 +77,11 @@ public class ListViewerAddFragment extends Fragment {
 					addProduct(addEditBox);
 				}
 				return true;
+			case R.id.suggestion_menu_item:
+				Log.d(TAG, "Suggestion selected.");
+				PredictorTask pt = new PredictorTask(getActivity(), this);
+				pt.execute();
+				break;
 			case R.id.rename_list:
 				Intent i = new Intent(getActivity(), GetStringDialog.class);
 				i.putExtra("PROMPT", "Enter new list name");
@@ -194,6 +205,75 @@ public class ListViewerAddFragment extends Fragment {
 
 	}
 
+	public void getIngredients(final Map<String, Product> prediction) {
+		final String[] predictionNames = (String[]) (new ArrayList<>(prediction.keySet())).toArray(new String[prediction.size()]);
+		Arrays.sort(predictionNames);
+
+
+
+
+		ArrayAdapter<String> adp = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_multiple_choice, predictionNames);
+		final List<Integer> selectedList = new ArrayList<>();
+		ListView lv = new ListView(getActivity());
+		lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		lv.setAdapter(adp);
+		//final Product[] np = newProductList;
+		boolean[] isSelected = new boolean[predictionNames.length];
+		for (int i=0; i<isSelected.length; i++)
+			isSelected[i] = true;
+		for (int i=0; i<isSelected.length; i++)
+			if (isSelected[i])
+				selectedList.add(i);
+
+		AlertDialog.Builder bldr = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle);
+		bldr.setTitle("Select Ingredients to Add");
+		//bldr.setMessage("Select Ingredients to Add");
+		//bldr.setView(lv);
+		bldr.setPositiveButton("Done",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.d(TAG, "Ok clicked.");
+						for (Integer index : selectedList) {
+							//Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
+							DatabaseHolder.getDatabase(getActivity()).addEntryToDatabase(prediction.get(index));
+							Log.d(TAG,(String) prediction.get(predictionNames[index]).get("NAME"));
+						}
+						//callbackRefresh.refreshProductList();
+					}
+				});
+		bldr.setMultiChoiceItems(predictionNames, isSelected ,new DialogInterface.OnMultiChoiceClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+				if (isChecked) {
+					selectedList.add(which);
+				} else {
+					selectedList.remove(Integer.valueOf(which));
+				}
+			}
+		});
+		bldr.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.d(TAG, "Cancel clicked.");
+					}
+				});
+
+		final Dialog dlg = bldr.create();
+		dlg.show();
+	}
+
+	@Override
+	public void predictionDoneCallback(Map<String, Product> prediction) {
+		//List<String> predictions = new ArrayList<>(prediction.keySet());
+		if (prediction.size() < 1)
+			Toast.makeText(getActivity(), "No recommendations found.", Toast.LENGTH_SHORT).show();
+		else
+			getIngredients(prediction);
+	}
+
 	private class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
 		private LayoutInflater mInflater;
@@ -262,5 +342,32 @@ public class ListViewerAddFragment extends Fragment {
 			return myFilter;
 		}
 	}
+
+
+	private static class PredictorTask extends AsyncTask<Void, Void, Map<String, Product>> {
+
+		private PredictorCallback pc;
+		private Context context;
+
+		public PredictorTask(Context context, PredictorCallback pc) {
+			this.pc=pc;
+			this.context=context;
+		}
+
+		@Override
+		protected Map<String, Product> doInBackground(Void... params) {
+			Map<String, Product> returnMap = ListPredictor.predictList(context);
+
+			return returnMap;
+		}
+
+		@Override
+		public void onPostExecute(Map<String, Product> prediction) {
+			super.onPostExecute(prediction);
+			pc.predictionDoneCallback(prediction);
+		}
+	}
+
+
 
 }

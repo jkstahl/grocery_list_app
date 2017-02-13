@@ -6,6 +6,11 @@
         android:title="@string/ic_add_white"
         android:showAsAction="ifRoom" />
     <item
+        android:title="Suggestions"
+        android:id="@+id/suggestion_menu_item"
+        android:icon="@drawable/magic_wand_icon"
+        android:showAsAction="ifRoom" />
+    <item
         android:title="Rename List"
         app:showAsAction="never"
         android:id="@+id/rename_list" />

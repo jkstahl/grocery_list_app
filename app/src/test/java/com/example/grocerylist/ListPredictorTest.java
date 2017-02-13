@@ -29,12 +29,12 @@ import static junit.framework.Assert.assertTrue;
 public class ListPredictorTest {
     private static final Integer COMMON_QUANTITY = 1;
     ProductListDB db;
-    private final int NUM_PRODUCTS = 30;
+    private final int NUM_PRODUCTS = 35;
     private final int SEED = 52;
     Random r = new Random(SEED);
     Map<String, RandomType> checkData;
     private final String COMMON_TYPE="FrequentType";
-    List<Product> outputList;
+
 
     private double getGaussianTimeStamp(double mean, double std) {
         return r.nextGaussian() * std + mean;
@@ -119,6 +119,7 @@ public class ListPredictorTest {
                 newProduct.put("TYPE", types.get(j));
                 newProduct.put("QUANTITY", quantities.get(j));
                 newProduct.put("UNITS", units.get(j));
+                //newProduct.put("RECIPE_LIST_ID", j);
                 db.addEntryToDatabase(newProduct);
                 db.updateTimestamp((Integer) newProduct.get("_id"), newStartTime);
                 //System.out.println(productName + " -> " + newStartTime + ", ");
@@ -127,7 +128,7 @@ public class ListPredictorTest {
             System.out.print("Name: " + productName);
             System.out.println(rt);
         }
-
+        db.printAll(db.getAllProductRecords());
         // perform any db operations you want here
     }
 
@@ -142,9 +143,10 @@ public class ListPredictorTest {
     @Test
     public void checkMissing() throws Exception {
         System.out.println("Testing basic prediction.");
-        outputList = ListPredictor.predictList(RuntimeEnvironment.application);
+        Map<String, Product> outputList = ListPredictor.predictList(RuntimeEnvironment.application);
         long epoch  = System.currentTimeMillis()/1000;
-        for (Product p : outputList) {
+        for (Map.Entry<String, Product> e : outputList.entrySet()) {
+            Product p = e.getValue();
             System.out.println(p);
             RandomType returnStats = checkData.get(p.get("NAME"));
             assertEquals(0, returnStats.type);
@@ -156,7 +158,7 @@ public class ListPredictorTest {
         for (String product : checkData.keySet()) {
             RandomType returnStats = checkData.get(product);
             if (returnStats.averageActual + returnStats.lastTime > epoch && returnStats.type == 0)
-                assertTrue("Product not found in output. Product: " + product + returnStats, contains( outputList, product));
+                assertTrue("Product not found in output. Product: " + product + returnStats, outputList.containsKey(product));
         }
 
     }

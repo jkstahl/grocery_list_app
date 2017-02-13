@@ -53,8 +53,8 @@ public class ListPredictor {
         }
     }
 
-    public static List<Product> predictList(Context context) {
-        List<Product> returnList = new ArrayList<>();
+    public static Map<String, Product> predictList(Context context) {
+        Map<String, Product> returnList = new HashMap<>();
         ProductListDB db = DatabaseHolder.getDatabase(context);
 
         // make a map for all products in the data base to a list of their creation time in seconds since epoch.
@@ -76,6 +76,7 @@ public class ListPredictor {
                 if (!productToAdd.containsKey(productName)) {
                     productToAdd.put(productName, new Product());
                     productToAdd.get(productName).put("NAME", productName);
+                    productToAdd.get(productName).put("CHECK_OUT", false);
                 }
 
                 List<Integer> newList;
@@ -137,7 +138,7 @@ public class ListPredictor {
                     " Delta: " + (epoch -(as.lastTime+as.average)) +
                     " Last Time: " + as.lastTime);
             if ((as.std) / as.average <= .1 && epoch <= as.lastTime + as.average) {
-                returnList.add(productToAdd.get(product));
+                returnList.put(product, productToAdd.get(product));
             }
         }
 
