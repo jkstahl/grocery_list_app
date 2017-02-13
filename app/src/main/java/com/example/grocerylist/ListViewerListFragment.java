@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -55,7 +56,20 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d("lifecycle", "Resume listviewer");
+		updateList();
 
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration config) {
+		super.onConfigurationChanged(config);
+		Log.d("lifecycle", "Config Chnaged " + config.toString());
+
+	}
 
 	public void updateList() {
 		getLoaderManager().restartLoader(0, null, this);

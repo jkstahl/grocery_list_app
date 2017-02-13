@@ -60,6 +60,9 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
                         mViewPager.getWindowToken();
                         if (position == 1)
                             hideKeyboard();
+
+                        if (position == 0 && mInsideListPager.addFragment != null)
+                            mInsideListPager.addFragment.updateList();
                     }
                 });
 
@@ -106,7 +109,7 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
 
     @Override
     public void refreshProductList() {
-        mInsideListPager.addFragment.updateList();
+        //mInsideListPager.getListFragment().updateList();
     }
 
     @Override

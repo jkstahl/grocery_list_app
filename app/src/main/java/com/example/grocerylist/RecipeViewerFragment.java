@@ -39,7 +39,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
     private DaysTracker dayTracker;
     private String listId;
     private ListView recipeList;
-    private ProductListDB productDatabase;
+    //private ProductListDB productDatabase;
     private OnRefreshCallback callbackRefresh;
     private ProductUnitExtractor unitExtractor;
     private final String TAG = "recipeviewer";
@@ -94,7 +94,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
 
 
         listId = getActivity().getIntent().getStringExtra("ListID");
-        productDatabase = DatabaseHolder.getDatabase(getActivity());
+        //productDatabase = DatabaseHolder.getDatabase(getActivity());
         getLoaderManager().initLoader(2, null, this);
         return rootView;
     }
@@ -110,13 +110,13 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     String recipeId = data.getStringExtra("RECIPE_ID");
                     String day = data.getStringExtra("DAY");
                     RecipeList rp = new RecipeList(Integer.parseInt(listId), Integer.parseInt(recipeId), day);
-                    String newRecipeListId = "" + productDatabase.addEntryToDatabase(rp);
+                    String newRecipeListId = "" + DatabaseHolder.getDatabase(getActivity()).addEntryToDatabase(rp);
                     // Add ingredients to the grocery list.
                     String recipeListId = data.getStringExtra("RECIPE_LIST_ID");
                     Log.d(TAG, "Recieved list id: " + recipeListId);
-                    productDatabase.deleteIngredientsWithId(recipeListId);
-                    productDatabase.deleteRecipeListItem(recipeListId);
-                    callbackRefresh.refreshProductList();
+                    DatabaseHolder.getDatabase(getActivity()).deleteIngredientsWithId(recipeListId);
+                    DatabaseHolder.getDatabase(getActivity()).deleteRecipeListItem(recipeListId);
+                    //callbackRefresh.refreshProductList();
                     addIngredientsToList(recipeId, newRecipeListId);
                     refreshRecipeList();
                 } else if (resultCode == RecipeSearchActivity.NEW) {
@@ -134,13 +134,13 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                     String recipeListId;
                     if (data.hasExtra("NEW_RECIPE_NAME")) {
                         RecipeList rl  = new RecipeList(Integer.parseInt(listId), Integer.parseInt(data.getStringExtra("RECIPE_ID")), data.getStringExtra("DAY"));
-                        recipeListId =  "" + productDatabase.addEntryToDatabase(rl);
+                        recipeListId =  "" + DatabaseHolder.getDatabase(getActivity()).addEntryToDatabase(rl);
                     } else { // this was an edit to a recipe
                         recipeListId = data.getStringExtra("RECIPE_LIST_ID");
                         //productDatabase.getIngredientsFromRecipeListId(recipeListId);
                     }
                     String recipeId = data.getStringExtra("RECIPE_ID");
-                    productDatabase.deleteIngredientsWithId(recipeListId);
+                    DatabaseHolder.getDatabase(getActivity()).deleteIngredientsWithId(recipeListId);
                     // Add ingredients as products to list.
                     addIngredientsToList(recipeId, recipeListId);
                     refreshRecipeList();
@@ -174,7 +174,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
                         Log.d(TAG, "Ok clicked.");
                         for (Integer index : selectedList) {
                             //Product newProduct = new Product(Integer.parseInt(listId), formattedProoduct.product, "Uncategorized", (float) formattedProoduct.quantity, formattedProoduct.units, false, recipeListId);
-                            productDatabase.addEntryToDatabase(np[index]);
+                            DatabaseHolder.getDatabase(getActivity()).addEntryToDatabase(np[index]);
                         }
                         callbackRefresh.refreshProductList();
                     }
@@ -204,7 +204,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
     }
 
     private void addIngredientsToList(String recipeId, String recipeListId) {
-        Cursor ingredientForRecipeCursor = productDatabase.getIngredientsForRecipe(recipeId);
+        Cursor ingredientForRecipeCursor = DatabaseHolder.getDatabase(getActivity()).getIngredientsForRecipe(recipeId);
         String[] ingredientsList = new String[ingredientForRecipeCursor.getCount()];
         boolean[] selectedArray = new boolean[ingredientForRecipeCursor.getCount()];
         Product[] newProductList = new Product[ingredientForRecipeCursor.getCount()];
@@ -241,7 +241,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
     }
 
     private void deleteRecipeFromList(String recipeListId) {
-        productDatabase.deleteRecipeListItem(recipeListId);
+        DatabaseHolder.getDatabase(getActivity()).deleteRecipeListItem(recipeListId);
         callbackRefresh.refreshProductList();
         refreshRecipeList();
     }
@@ -249,7 +249,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new GListCursorLoader(getActivity(), productDatabase, listId);
+        return new GListCursorLoader(getActivity(), DatabaseHolder.getDatabase(getActivity()), listId);
     }
 
     @Override
@@ -360,17 +360,17 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
 
     private static class GListCursorLoader extends SQLiteCursorLoader {
         private String listId;
-        private ProductListDB productDatabase;
+        //private ProductListDB productDatabase;
 
         public GListCursorLoader(Context activity, ProductListDB db, String thisID) {
             super(activity);
             listId = thisID;
-            productDatabase = db;
+            //productDatabase = db;
         }
 
         @Override
         protected Cursor loadCursor() {
-            return productDatabase.getRecipesFromList(listId);
+            return DatabaseHolder.getDatabase(null).getRecipesFromList(listId);
         }
     }
 }

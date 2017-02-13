@@ -9,8 +9,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 // and NOT a FragmentPagerAdapter.
 public class InsideListPager extends FragmentPagerAdapter {
     ListViewerAddFragment addFragment;
+
     public InsideListPager(FragmentManager fm) {
         super(fm);
+    }
+
+    public ListViewerAddFragment getListFragment() {
+        if (addFragment == null) {
+            addFragment = new ListViewerAddFragment();
+            return addFragment;
+        } else {
+            return addFragment;
+        }
     }
 
     @Override
@@ -18,8 +28,7 @@ public class InsideListPager extends FragmentPagerAdapter {
         Fragment fragment;
         switch (i) {
             case 0:
-                fragment = (Fragment) new ListViewerAddFragment();
-                addFragment = (ListViewerAddFragment) fragment;
+                fragment = getListFragment();
                 break;
             case 1:
                 fragment = new RecipeViewerFragment();

@@ -162,13 +162,13 @@ public class WebsiteParserTest {
         fd = wp.parseSite("https://www.weightwatchers.com/us/recipe/cashew-chicken-1/5626a5eca6d5b396106fe961");
         ingredientExpect = new ArrayList<Ingredients>();
         ingredientExpect.add(new Ingredients("2 tsp peanut oil"));
-        ingredientExpect.add(new Ingredients("2 clove(s) garlic clove(s), minced"));
+        ingredientExpect.add(new Ingredients("2 clove(s), medium garlic clove(s), minced"));
         ingredientExpect.add(new Ingredients("1 pound(s) uncooked boneless skinless chicken breast(s), cut into 1-inch cubes"));
         ingredientExpect.add(new Ingredients("1/2 tsp table salt, or more to taste"));
         ingredientExpect.add(new Ingredients("1/4 tsp black pepper, or more to taste"));
         ingredientExpect.add(new Ingredients("1 1/2 cup(s) fat-free reduced sodium chicken broth, divided"));
         ingredientExpect.add(new Ingredients("2 Tbsp low sodium soy sauce, or more to taste"));
-        ingredientExpect.add(new Ingredients("2 rib(s) uncooked celery, chopped"));
+        ingredientExpect.add(new Ingredients("2 rib(s), medium uncooked celery, chopped"));
         ingredientExpect.add(new Ingredients("8 oz canned bamboo shoots, drained"));
         ingredientExpect.add(new Ingredients("8 oz canned water chestnut(s), sliced, drained"));
         ingredientExpect.add(new Ingredients("1 1/2 Tbsp cornstarch"));

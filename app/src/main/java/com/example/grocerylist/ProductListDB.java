@@ -196,7 +196,7 @@ public class ProductListDB extends SQLiteOpenHelper {
     }
 
 
-    private void createDummyList(SQLiteDatabase productDatabase) {
+    public void createDummyList(SQLiteDatabase productDatabase) {
         Random r = new Random();
 
         int numProducts = 50;
@@ -441,11 +441,13 @@ public class ProductListDB extends SQLiteOpenHelper {
         Log.d("database", "Updating " + updated + "records");
     }
 
-    private void printAll(Cursor reciepeCursor) {
+    public void printAll(Cursor reciepeCursor) {
         if (reciepeCursor.moveToFirst()) {
             do {
                 for (int i = 0; i < reciepeCursor.getColumnCount(); i++) {
-                    Log.d("database", reciepeCursor.getColumnName(i) + ": " + reciepeCursor.getString(i));
+                    String temp = reciepeCursor.getColumnName(i) + ": " + reciepeCursor.getString(i);
+                    Log.d("database", temp);
+                    System.out.println(temp);
                 }
             } while (reciepeCursor.moveToNext());
         }
@@ -582,5 +584,18 @@ public class ProductListDB extends SQLiteOpenHelper {
         Cursor c =  db.rawQuery("SELECT temp.NAME, temp.TYPE, COUNT(temp.NAME) NAME_OCCURANCE FROM (SELECT NAME, TYPE FROM PRODUCTS UNION ALL SELECT NAME, TYPE FROM PRODUCT_EXAMPLES) AS temp GROUP BY temp.NAME ORDER BY NAME_OCCURANCE DESC", null);
         printAll(c);
         return c;
+    }
+
+    public Cursor getAllProductRecords() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.query(Product.TABLE_PRODUCTS, new String[] {"NAME", "TYPE", "QUANTITY", "UNITS", "TIMESTAMP"},null,null,null,null,null);
+        return c;
+    }
+
+    public void updateTimestamp(Integer id, long newStartTime) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("TIMESTAMP", (int) newStartTime);
+        db.update(Product.TABLE_PRODUCTS,cv, "_id=" +id,null);
     }
 }

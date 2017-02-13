@@ -32,7 +32,7 @@ import java.util.List;
 
 
 public class ListViewerAddFragment extends Fragment {
-	private ProductListDB productDatabase;
+	//private ProductListDB productDatabase;
 	private int listId;
 	private ListViewerListFragment listViewer;
 	private final String TAG="listvieweradd";
@@ -42,8 +42,8 @@ public class ListViewerAddFragment extends Fragment {
 
 	protected Fragment createFragment() {
 
-		listViewer = new ListViewerListFragment();
-		productDatabase = DatabaseHolder.getDatabase(null);
+		listViewer = getListViewer();
+		//productDatabase = DatabaseHolder.getDatabase(null);
 		listId = Integer.parseInt(this.getActivity().getIntent().getStringExtra("ListID"));
 		Log.d("debug", "List id is "+listId);
 		return listViewer;
@@ -66,7 +66,7 @@ public class ListViewerAddFragment extends Fragment {
 				return true;
 			case R.id.delete_list:
 				// remove list and prods and recipes
-				productDatabase.removeList(listId);
+				DatabaseHolder.getDatabase(getActivity()).removeList(listId);
 				getActivity().finish();
 				return true;
 		}
@@ -82,7 +82,7 @@ public class ListViewerAddFragment extends Fragment {
 					String newListName = data.getStringExtra("RETURN_STRING");
 					Log.d(TAG, "New List Name: " + newListName);
 					if (!newListName.trim().equals("")) {
-						productDatabase.updateListName("" + listId, newListName);
+						DatabaseHolder.getDatabase(getActivity()).updateListName("" + listId, newListName);
 						getActivity().setTitle(newListName);
 					}
 				}
@@ -102,7 +102,7 @@ public class ListViewerAddFragment extends Fragment {
 		String category = ProductCategoryFinder.getCategoryFromProductName(getActivity(), qup.product);
 		Product newList =  new Product(listId, qup.product, category, (float) qup.quantity, qup.units, false);
 		// add product to the database
-		productDatabase.addEntryToDatabase(newList);
+		DatabaseHolder.getDatabase(getActivity()).addEntryToDatabase(newList);
 		listViewer.updateList();
 		addNewItemTextView.setText("");
 	}
@@ -161,8 +161,24 @@ public class ListViewerAddFragment extends Fragment {
 		return rootView;
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		
+
+	}
+
 	public void updateList() {
-		listViewer.updateList();
+		getListViewer().updateList();
+	}
+
+	public ListViewerListFragment getListViewer() {
+		if (listViewer == null) {
+			listViewer = new ListViewerListFragment();
+		}
+		return listViewer;
+
 	}
 
 	private class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
@@ -198,7 +214,7 @@ public class ListViewerAddFragment extends Fragment {
 				protected FilterResults performFiltering(final CharSequence constraint) {
 					List<String> filteredProducts = null;
 					if (constraint != null) {
-						filteredProducts = productDatabase.getFilteredProducts((String) constraint);
+						filteredProducts = DatabaseHolder.getDatabase(getActivity()).getFilteredProducts((String) constraint);
 					}
 					if (filteredProducts == null) {
 						filteredProducts = new ArrayList<String>();
