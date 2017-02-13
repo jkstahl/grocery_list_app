@@ -117,7 +117,7 @@ public class ListViewerAddFragment extends Fragment {
 		Product newList =  new Product(listId, qup.product, category, (float) qup.quantity, qup.units, false);
 		// add product to the database
 		DatabaseHolder.getDatabase(getActivity()).addEntryToDatabase(newList);
-		listViewer.updateList();
+		updateList();
 		addNewItemTextView.setText("");
 	}
 
