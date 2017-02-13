@@ -39,10 +39,12 @@ import java.util.Set;
 
 
 public class ListViewerListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>  {
-	private ProductListDB productDatabase;
+	//private ProductListDB productDatabase;
 	private ProductInListAdapter adapter;
 	private String thisID;
 	private final String TAG= "listviewer";
+	private final int LOADER_ID=1;
+
 
 	@Override
 	public void onCreate(Bundle sis) {
@@ -50,9 +52,9 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 		Log.d("debug", "created list fragment");
 		thisID = this.getActivity().getIntent().getStringExtra("ListID");
-		productDatabase = DatabaseHolder.getDatabase(getActivity());
-		getLoaderManager().initLoader(1, null, this);
-
+		//productDatabase = DatabaseHolder.getDatabase(getActivity());
+		getLoaderManager().initLoader(LOADER_ID, null, this);
+		//this.setRetainInstance(true);
 
 	}
 
@@ -64,15 +66,9 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 	}
 
-	@Override
-	public void onConfigurationChanged(Configuration config) {
-		super.onConfigurationChanged(config);
-		Log.d("lifecycle", "Config Chnaged " + config.toString());
-
-	}
 
 	public void updateList() {
-		getLoaderManager().restartLoader(0, null, this);
+		getLoaderManager().restartLoader(LOADER_ID, null, this);
 
 	}
 
@@ -109,7 +105,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 						if (whereString.length() > 0)
 							whereString = whereString.substring(0, whereString.length()-orString.length());
 						Log.d(TAG, whereString);
-						productDatabase.deleteMultipleProducts(whereString);
+						DatabaseHolder.getDatabase(getActivity()).deleteMultipleProducts(whereString);
 						arg0.finish();
                         updateList();
 						return true;
@@ -178,12 +174,12 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 					Log.d("return", "Returned from Product edit activity with OK to change.");
 					ProductPackager pp = new ProductPackager(data);
 					ContentValues cv = pp.getValuesContainer();
-					productDatabase.updateTable(Product.TABLE_PRODUCTS, cv, "" + cv.get("_id"));
+					DatabaseHolder.getDatabase(getActivity()).updateTable(Product.TABLE_PRODUCTS, cv, "" + cv.get("_id"));
 					updateList();
 					//productDatabase.updateProductInList();
 				} else if (resultCode == ProductEditActivity.DELETE) {
 					Log.d("return", "Returned from Product edit activity with delete.");
-					productDatabase.deleteProductByID(Integer.parseInt(data.getStringExtra("_id")));
+					DatabaseHolder.getDatabase(getActivity()).deleteProductByID(Integer.parseInt(data.getStringExtra("_id")));
 					updateList();
 				}
 
@@ -197,7 +193,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new GListCursorLoader(getActivity(), productDatabase, thisID);
+		return new GListCursorLoader(getActivity(), DatabaseHolder.getDatabase(getActivity()), thisID);
 	}
 
 	@Override

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
+import android.view.ViewGroup;
 
 // Since this is an object collection, use a FragmentStatePagerAdapter,
 // and NOT a FragmentPagerAdapter.
@@ -39,6 +41,14 @@ public class InsideListPager extends FragmentPagerAdapter {
 
         Bundle args = new Bundle();
         fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        if (position == 0)
+            addFragment = (ListViewerAddFragment) fragment;
         return fragment;
     }
 

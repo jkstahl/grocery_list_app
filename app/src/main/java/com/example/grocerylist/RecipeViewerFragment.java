@@ -35,6 +35,7 @@ import java.util.Map;
  * Created by neoba on 12/28/2016.
  */
 public class RecipeViewerFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int LOADER_ID = 2;
     private RecipeAdderAdapter recipeAdderAdapter;
     private DaysTracker dayTracker;
     private String listId;
@@ -95,7 +96,7 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
 
         listId = getActivity().getIntent().getStringExtra("ListID");
         //productDatabase = DatabaseHolder.getDatabase(getActivity());
-        getLoaderManager().initLoader(2, null, this);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
         return rootView;
     }
 
@@ -274,6 +275,12 @@ public class RecipeViewerFragment extends Fragment  implements LoaderManager.Loa
 
     public interface OnRefreshCallback {
         public void refreshProductList();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
     @Override

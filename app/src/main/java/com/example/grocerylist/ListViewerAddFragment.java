@@ -39,6 +39,11 @@ public class ListViewerAddFragment extends Fragment {
 	private AutoCompleteTextView addNewItemTextView=null;
 	String newListName=null;
 
+	public ListViewerAddFragment() {
+		super();
+		Log.d(TAG, "created new fragment.");
+	}
+
 
 	protected Fragment createFragment() {
 
@@ -46,7 +51,14 @@ public class ListViewerAddFragment extends Fragment {
 		//productDatabase = DatabaseHolder.getDatabase(null);
 		listId = Integer.parseInt(this.getActivity().getIntent().getStringExtra("ListID"));
 		Log.d("debug", "List id is "+listId);
+
 		return listViewer;
+	}
+
+	@Override
+	public void onAttach(Context c) {
+		super.onAttach(c);
+		Log.d(TAG, "Attached to context.");
 	}
 
 	@Override
@@ -90,6 +102,8 @@ public class ListViewerAddFragment extends Fragment {
 		}
 	}
 
+
+
 	private void addProduct(String newProduct) {
 		Log.d("action", "Done clicked in new item input");
 		// Extract quantity and units from name string
@@ -123,7 +137,12 @@ public class ListViewerAddFragment extends Fragment {
 			Log.d("listviewer", "Creating fragment.");
 			//Fragment fragment = getFragmentManager().findFragmentById(R.id.activity_container);
 			Fragment fragment = createFragment();
+
 			getFragmentManager().beginTransaction().add(R.id.list_fragment, fragment).commit();
+		} else {
+			Log.d("lifecycle", "Resuming list.");
+			//ListViewerListFragment lv = (ListViewerListFragment) getFragmentManager().findFragmentById(R.id.list_fragment);
+			//lv.updateList();
 		}
 		ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.list_frame_global, container, false);
 		listId = Integer.parseInt(this.getActivity().getIntent().getStringExtra("ListID"));
@@ -158,19 +177,13 @@ public class ListViewerAddFragment extends Fragment {
 			}
 		});
 
+
 		return rootView;
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		
-		
-
-	}
 
 	public void updateList() {
-		getListViewer().updateList();
+		((ListViewerListFragment)getFragmentManager().findFragmentById(R.id.list_fragment)).updateList();
 	}
 
 	public ListViewerListFragment getListViewer() {

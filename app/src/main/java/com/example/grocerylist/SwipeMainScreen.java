@@ -48,6 +48,8 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mInsideListPager);
 
+
+
         mViewPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
                     @Override
@@ -60,6 +62,7 @@ public class SwipeMainScreen extends FragmentActivity implements RecipeViewerFra
                         mViewPager.getWindowToken();
                         if (position == 1)
                             hideKeyboard();
+
 
                         if (position == 0 && mInsideListPager.addFragment != null)
                             mInsideListPager.addFragment.updateList();
