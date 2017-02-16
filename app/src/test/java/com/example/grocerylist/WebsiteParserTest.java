@@ -1,9 +1,11 @@
 
 package com.example.grocerylist;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 
@@ -186,5 +188,45 @@ public class WebsiteParserTest {
         assertEquals(recipeExpect,fd.recipe);
     }
 
+    @Before
+    public void initialize() {
+        WordList.init(RuntimeEnvironment.application);
+    }
 
+    @Test
+    public void generic() throws Exception {
+
+
+
+        //WebsiteParser wp = new WebsiteParser();
+        WebsiteParser wp = new WebsiteParser();
+        WebsiteParser.FormattedData fd = wp.parseSite("http://www.mccormick.com/recipes/main-dishes/ultimate-macaroni-and-cheese");
+        // Check parsed data is correct from website.
+        Recipe recipeExpect = new Recipe();
+        List<Ingredients> ingredientExpect = new ArrayList<Ingredients>();
+        ingredientExpect.add(new Ingredients("1 package elbow macaroni"));
+        ingredientExpect.add(new Ingredients("6 tablespoons butter"));
+        ingredientExpect.add(new Ingredients("6 tablespoons flour"));
+        ingredientExpect.add(new Ingredients("2 tablespoons McCormick&#174; Mustard"));
+        ingredientExpect.add(new Ingredients("1 1/2 teaspoons McCormick&#174; Black Pepper"));
+        ingredientExpect.add(new Ingredients("1 teaspoon McCormick&#174; Garlic Powder"));
+        ingredientExpect.add(new Ingredients("1 teaspoon salt"));
+        ingredientExpect.add(new Ingredients("4 cups milk"));
+        ingredientExpect.add(new Ingredients("6 cups shredded sharp Cheddar cheese"));
+        ingredientExpect.add(new Ingredients("1 1/2 cups panko bread crumbs"));
+        ingredientExpect.add(new Ingredients("1 teaspoon McCormick&#174; Paprika"));
+        for (int i=0; i<fd.ingredients.size(); i++)
+            assertEquals(ingredientExpect.get(i), fd.ingredients.get(i));
+        recipeExpect.put("NAME", "Ultimate Macaroni & Cheese Recipe | McCormick");
+        recipeExpect.put("INSTRUCTIONS",
+                "Position the rack in the center of the oven and preheat the oven to 350°F.\n" +
+                        "Crumble the sausage meat into a large saucepan and brown over medium heat, stirring often, about 4 minutes.\n" +
+                        "Drain off any fat, then add the onion and bell pepper. Cook, stirring often, until softened, about 3 minutes.\n" +
+                        "Stir in the tomatoes, peas, tomato paste, oregano, basil, thyme, fennel seeds, salt and pepper. Bring to a simmer, then reduce the heat and cook uncovered 5 minutes, stirring often.\n" +
+                        "Stir in the cooked pasta and half the cheese. Spread evenly into a 9- X 13-inch baking pan. Top evenly with the remaining cheese.\n" +
+                        "Bake until the cheese has melted and the casserole is bubbling, about 20 minutes. Let stand 10 minutes at room temperature before slicing into 8 pieces. Yields 1 piece per serving.\n");
+        recipeExpect.put("SERVINGS", 8);
+        assertEquals(recipeExpect,fd.recipe);
+
+    }
 }

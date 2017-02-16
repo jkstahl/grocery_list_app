@@ -1,5 +1,691 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="cooking_verbs_list">
+        <item>Add</item>
+        <item>adjust</item>
+        <item>arrange</item>
+        <item>bake</item>
+        <item>baste</item>
+        <item>batter</item>
+        <item>beat</item>
+        <item>blend</item>
+        <item>boil</item>
+        <item>braise</item>
+        <item>break</item>
+        <item>broil</item>
+        <item>brown</item>
+        <item>brush</item>
+        <item>build</item>
+        <item>burn</item>
+        <item>bury</item>
+        <item>carve</item>
+        <item>check</item>
+        <item>chill</item>
+        <item>chop</item>
+        <item>clarify</item>
+        <item>close</item>
+        <item>cook</item>
+        <item>cool</item>
+        <item>correct</item>
+        <item>cover</item>
+        <item>crack</item>
+        <item>crumple</item>
+        <item>cut</item>
+    
+        <item>Debone</item>
+        <item>dice</item>
+        <item>discard</item>
+        <item>drain</item>
+        <item>dress</item>
+        <item>fillet</item>
+        <item>flour</item>
+        <item>fold</item>
+        <item>freeze</item>
+        <item>fry</item>
+        <item>deep fry</item>
+        <item>flash fry</item>
+        <item>garnish</item>
+        <item>glaze</item>
+        <item>grate</item>
+        <item>grind</item>
+        <item>grill</item>
+        <item>gut</item>
+        <item>heat</item>
+        <item>knead</item>
+    
+        <item>Lower</item>
+        <item>macerate</item>
+        <item>marinate</item>
+        <item>mash</item>
+        <item>melt</item>
+        <item>mince</item>
+        <item>mix</item>
+        <item>open</item>
+        <item>parboil</item>
+        <item>peel</item>
+        <item>pickle</item>
+        <item>place</item>
+        <item>poach</item>
+        <item>pour</item>
+        <item>preheat</item>
+        <item>prepare</item>
+        <item>put</item>
+        <item>reduce</item>
+        <item>refrigerate</item>
+        <item>remove</item>
+        <item>rinse</item>
+        <item>roast</item>
+        <item>roll out</item>
+        <item>roll up</item>
+        <item>rub</item>
+    
+        <item>Salt</item>
+        <item>sauté</item>
+        <item>saute</item>
+        <item>scoop</item>
+        <item>scorch</item>
+        <item>scramble</item>
+        <item>season</item>
+        <item>serve</item>
+        <item>set</item>
+        <item>simmer</item>
+        <item>skim</item>
+        <item>slice</item>
+        <item>soak</item>
+        <item>spice</item>
+        <item>spoon</item>
+        <item>spread</item>
+        <item>sprinkle</item>
+        <item>squeeze</item>
+        <item>steam</item>
+        <item>stir</item>
+        <item>strain</item>
+        <item>sugar</item>
+        <item>sweeten</item>
+    
+        <item>taste</item>
+        <item>thaw</item>
+        <item>thicken</item>
+        <item>toast</item>
+        <item>try</item>
+        <item>warm</item>
+        <item>wash</item>
+        <item>water down</item>
+        <item>whip</item>
+        <item>whisk</item>
+        <item>wipe</item>
+    </string-array>
+
+    <string-array name="food_word_list">
+        <item>acorn squash</item>
+        <item>alfalfa sprouts</item>
+        <item>almond</item>
+        <item>anchovy</item>
+        <item>anise</item>
+        <item>appetizer</item>
+        <item>appetite</item>
+        <item>apple</item>
+        <item>apricot</item>
+        <item>artichoke</item>
+        <item>asparagus</item>
+        <item>aspic</item>
+        <item>ate</item>
+        <item>avocado</item>
+
+        <item>bacon</item>
+        <item>bagel</item>
+        <item>bake</item>
+        <item>baked Alaska</item>
+        <item>bamboo shoots</item>
+        <item>banana</item>
+        <item>barbecue</item>
+        <item>barley</item>
+        <item>basil</item>
+        <item>batter</item>
+        <item>beancurd</item>
+        <item>beans</item>
+        <item>beef</item>
+        <item>beet</item>
+        <item>bell pepper</item>
+        <item>berry</item>
+        <item>biscuit</item>
+        <item>bitter</item>
+        <item>black beans</item>
+        <item>blackberry</item>
+        <item>black-eyed peas</item>
+        <item>black tea</item>
+        <item>bland</item>
+        <item>blood orange</item>
+        <item>blueberry</item>
+        <item>boil</item>
+        <item>bowl</item>
+        <item>boysenberry</item>
+        <item>bran</item>
+        <item>bread</item>
+        <item>breadfruit</item>
+        <item>breakfast</item>
+        <item>brisket</item>
+        <item>broccoli</item>
+        <item>broil</item>
+        <item>brownie</item>
+        <item>brown rice</item>
+        <item>brunch</item>
+        <item>Brussels sprouts</item>
+        <item>buckwheat</item>
+        <item>buns</item>
+        <item>burrito</item>
+        <item>butter</item>
+        <item>butter bean</item>
+
+        <item>cake</item>
+        <item>calorie</item>
+        <item>candy</item>
+        <item>candy apple</item>
+        <item>cantaloupe</item>
+        <item>capers</item>
+        <item>caramel</item>
+        <item>caramel apple</item>
+        <item>carbohydrate</item>
+        <item>carrot</item>
+        <item>cashew</item>
+        <item>cassava</item>
+        <item>casserole</item>
+        <item>cater</item>
+        <item>cauliflower</item>
+        <item>caviar</item>
+        <item>cayenne pepper</item>
+        <item>celery</item>
+        <item>cereal</item>
+        <item>chard</item>
+        <item>cheddar</item>
+        <item>cheese</item>
+        <item>cheesecake</item>
+        <item>chef</item>
+        <item>cherry</item>
+        <item>chew</item>
+        <item>chicken</item>
+        <item>chick peas</item>
+        <item>chili</item>
+        <item>chips</item>
+        <item>chives</item>
+        <item>chocolate</item>
+        <item>chopsticks</item>
+        <item>chow</item>
+        <item>chutney</item>
+        <item>cilantro</item>
+        <item>cinnamon</item>
+        <item>citron</item>
+        <item>citrus</item>
+        <item>clam</item>
+        <item>cloves</item>
+        <item>cobbler</item>
+        <item>coconut</item>
+        <item>cod</item>
+        <item>coffee</item>
+        <item>coleslaw</item>
+        <item>collard greens</item>
+        <item>comestibles</item>
+        <item>cook</item>
+        <item>cookbook</item>
+        <item>cookie</item>
+        <item>corn</item>
+        <item>cornflakes</item>
+        <item>cornmeal</item>
+        <item>cottage cheese</item>
+        <item>crab</item>
+        <item>crackers</item>
+        <item>cranberry</item>
+        <item>cream</item>
+        <item>cream cheese</item>
+        <item>crepe</item>
+        <item>crisp</item>
+        <item>crunch</item>
+        <item>crust</item>
+        <item>cucumber</item>
+        <item>cuisine</item>
+        <item>cupboard</item>
+        <item>cupcake</item>
+        <item>curds</item>
+        <item>currants</item>
+        <item>curry</item>
+        <item>custard</item>
+
+        <item>daikon</item>
+        <item>daily bread</item>
+        <item>dairy</item>
+        <item>dandelion greens</item>
+        <item>Danish pastry</item>
+        <item>dates</item>
+        <item>dessert</item>
+        <item>diet</item>
+        <item>digest</item>
+        <item>digestive system</item>
+        <item>dill</item>
+        <item>dine</item>
+        <item>diner</item>
+        <item>dinner</item>
+        <item>dip</item>
+        <item>dish</item>
+        <item>dough</item>
+        <item>doughnut</item>
+        <item>dragonfruit</item>
+        <item>dressing</item>
+        <item>dried</item>
+        <item>drink</item>
+        <item>dry</item>
+        <item>durian</item>
+
+        <item>eat</item>
+        <item>Edam cheese</item>
+        <item>edible</item>
+        <item>egg</item>
+        <item>eggplant</item>
+        <item>elderberry</item>
+        <item>endive</item>
+        <item>entree</item>
+
+        <item>fast</item>
+        <item>fat</item>
+        <item>fava bans</item>
+        <item>feast</item>
+        <item>fed</item>
+        <item>feed</item>
+        <item>fennel</item>
+        <item>fig</item>
+        <item>fillet</item>
+        <item>fire</item>
+        <item>fish</item>
+        <item>flan</item>
+        <item>flax</item>
+        <item>flour</item>
+        <item>food</item>
+        <item>food pyramid</item>
+        <item>foodstuffs</item>
+        <item>fork</item>
+        <item>freezer</item>
+        <item>French fries</item>
+        <item>fried</item>
+        <item>fritter</item>
+        <item>frosting</item>
+        <item>fruit</item>
+        <item>fry</item>
+
+        <item>garlic</item>
+        <item>gastronomy</item>
+        <item>gelatin</item>
+        <item>ginger</item>
+        <item>gingerale</item>
+        <item>gingerbread</item>
+        <item>glasses</item>
+        <item>Gouda cheese</item>
+        <item>grain</item>
+        <item>granola</item>
+        <item>grape</item>
+        <item>grapefruit</item>
+        <item>grated</item>
+        <item>gravy</item>
+        <item>greenbean</item>
+        <item>greens</item>
+        <item>green tea</item>
+        <item>grub</item>
+        <item>guacamole</item>
+        <item>guava</item>
+        <item>gyro</item>
+
+        <item>herbs</item>
+        <item>halibut</item>
+        <item>ham</item>
+        <item>hamburger</item>
+        <item>hash</item>
+        <item>hazelnut</item>
+        <item>herbs</item>
+        <item>honey</item>
+        <item>honeydew</item>
+        <item>horseradish</item>
+        <item>hot</item>
+        <item>hot dog</item>
+        <item>hot sauce</item>
+        <item>hummus</item>
+        <item>hunger</item>
+        <item>hungry</item>
+
+        <item>ice</item>
+        <item>iceberg lettuce</item>
+        <item>iced tea</item>
+        <item>icing</item>
+        <item>ice cream</item>
+        <item>ice cream cone</item>
+
+        <item>jackfruit</item>
+        <item>jalapeno</item>
+        <item>jam</item>
+        <item>jelly</item>
+        <item>jellybeans</item>
+        <item>jicama</item>
+        <item>jimmies</item>
+        <item>Jordan almonds</item>
+        <item>jug</item>
+        <item>julienne</item>
+        <item>juice</item>
+        <item>junk food</item>
+
+        <item>kale</item>
+        <item>kebab</item>
+        <item>ketchup</item>
+        <item>kettle</item>
+        <item>kettle corn</item>
+        <item>kidney beans</item>
+        <item>kitchen</item>
+        <item>kiwi</item>
+        <item>knife</item>
+        <item>kohlrabi</item>
+        <item>kumquat</item>
+
+        <item>ladle</item>
+        <item>lamb</item>
+        <item>lard</item>
+        <item>lasagna</item>
+        <item>legumes</item>
+        <item>lemon</item>
+        <item>lemonade</item>
+        <item>lentils</item>
+        <item>lettuce</item>
+        <item>licorice</item>
+        <item>lima beans</item>
+        <item>lime</item>
+        <item>liver</item>
+        <item>loaf</item>
+        <item>lobster</item>
+        <item>lollipop</item>
+        <item>loquat</item>
+        <item>lox</item>
+        <item>lunch</item>
+        <item>lunch box</item>
+        <item>lunchmeat</item>
+        <item>lychee</item>
+
+        <item>macaroni</item>
+        <item>macaroon</item>
+        <item>main course</item>
+        <item>maize</item>
+        <item>mandarin orange</item>
+        <item>mango</item>
+        <item>maple syrup</item>
+        <item>margarine</item>
+        <item>marionberry</item>
+        <item>marmalade</item>
+        <item>marshmallow</item>
+        <item>mashed potatoes</item>
+        <item>mayonnaise</item>
+        <item>meat</item>
+        <item>meatball</item>
+        <item>meatloaf</item>
+        <item>melon</item>
+        <item>menu</item>
+        <item>meringue</item>
+        <item>micronutrient</item>
+        <item>milk</item>
+        <item>milkshake</item>
+        <item>millet</item>
+        <item>mincemeat</item>
+        <item>minerals</item>
+        <item>mint</item>
+        <item>mints</item>
+        <item>mochi</item>
+        <item>molasses</item>
+        <item>mole sauce</item>
+        <item>mozzarella</item>
+        <item>muffin</item>
+        <item>mug</item>
+        <item>munch</item>
+        <item>mushroom</item>
+        <item>mussels</item>
+        <item>mustard</item>
+        <item>mustard greens</item>
+        <item>mutton</item>
+
+        <item>napkin</item>
+        <item>nectar</item>
+        <item>nectarine</item>
+        <item>nibble</item>
+        <item>noodles</item>
+        <item>nosh</item>
+        <item>nourish</item>
+        <item>nourishment</item>
+        <item>nut</item>
+        <item>nutmeg</item>
+        <item>nutrient</item>
+        <item>nutrition</item>
+        <item>nutritious</item>
+
+        <item>oats</item>
+        <item>oatmeal</item>
+        <item>oil</item>
+        <item>okra</item>
+        <item>oleo</item>
+        <item>olive</item>
+        <item>omelet</item>
+        <item>omnivore</item>
+        <item>onion</item>
+        <item>orange</item>
+        <item>order</item>
+        <item>oregano</item>
+        <item>oven</item>
+        <item>oyster</item>
+
+        <item>pan</item>
+        <item>pancake</item>
+        <item>paprika</item>
+        <item>papaya</item>
+        <item>parsley</item>
+        <item>parsnip</item>
+        <item>pasta</item>
+        <item>pastry</item>
+        <item>pate</item>
+        <item>patty</item>
+        <item>pattypan squash</item>
+        <item>peach</item>
+        <item>peanut</item>
+        <item>peanut butter</item>
+        <item>pea</item>
+        <item>pear</item>
+        <item>pecan</item>
+        <item>peapod</item>
+        <item>pepper</item>
+        <item>pepperoni</item>
+        <item>persimmon</item>
+        <item>pickle</item>
+        <item>picnic</item>
+        <item>pie</item>
+        <item>pilaf</item>
+        <item>pineapple</item>
+        <item>pita bread</item>
+        <item>pitcher</item>
+        <item>pizza</item>
+        <item>plate</item>
+        <item>platter</item>
+        <item>plum</item>
+        <item>poached</item>
+        <item>pomegranate</item>
+        <item>pomelo</item>
+        <item>pop</item>
+        <item>popsicle</item>
+        <item>popcorn</item>
+        <item>popovers</item>
+        <item>pork</item>
+        <item>pork chops</item>
+        <item>pot</item>
+        <item>potato</item>
+        <item>pot roast</item>
+        <item>preserves</item>
+        <item>pretzel</item>
+        <item>prime rib</item>
+        <item>protein</item>
+        <item>provisions</item>
+        <item>prune</item>
+        <item>pudding</item>
+        <item>pumpernickel</item>
+        <item>pumpkin</item>
+        <item>punch</item>
+
+        <item>quiche</item>
+        <item>quinoa</item>
+
+        <item>radish</item>
+        <item>raisin</item>
+        <item>raspberry</item>
+        <item>rations</item>
+        <item>ravioli</item>
+        <item>recipe</item>
+        <item>refreshments</item>
+        <item>refrigerator</item>
+        <item>relish</item>
+        <item>restaurant</item>
+        <item>rhubarb</item>
+        <item>ribs</item>
+        <item>rice</item>
+        <item>roast</item>
+        <item>roll</item>
+        <item>rolling pin</item>
+        <item>romaine</item>
+        <item>rosemary</item>
+        <item>rye</item>
+
+        <item>saffron</item>
+        <item>sage</item>
+        <item>salad</item>
+        <item>salami</item>
+        <item>salmon</item>
+        <item>salsa</item>
+        <item>salt</item>
+        <item>sandwich</item>
+        <item>sauce</item>
+        <item>sauerkraut</item>
+        <item>sausage</item>
+        <item>savory</item>
+        <item>scallops</item>
+        <item>scrambled</item>
+        <item>seaweed</item>
+        <item>seeds</item>
+        <item>sesame seed</item>
+        <item>shallots</item>
+        <item>sherbet</item>
+        <item>shish kebab</item>
+        <item>shrimp</item>
+        <item>slaw</item>
+        <item>slice</item>
+        <item>smoked</item>
+        <item>snack</item>
+        <item>soda</item>
+        <item>soda bread</item>
+        <item>sole</item>
+        <item>sorbet</item>
+        <item>sorghum</item>
+        <item>sorrel</item>
+        <item>soup</item>
+        <item>sour</item>
+        <item>sour cream</item>
+        <item>soy</item>
+        <item>soybeans</item>
+        <item>soysauce</item>
+        <item>spaghetti</item>
+        <item>spareribs</item>
+        <item>spatula</item>
+        <item>spices</item>
+        <item>spicy</item>
+        <item>spinach</item>
+        <item>split peas</item>
+        <item>spoon</item>
+        <item>spork</item>
+        <item>sprinkles</item>
+        <item>sprouts</item>
+        <item>spuds</item>
+        <item>squash</item>
+        <item>squid</item>
+        <item>steak</item>
+        <item>stew</item>
+        <item>stir-fry</item>
+        <item>stomach</item>
+        <item>stove</item>
+        <item>straw</item>
+        <item>strawberry</item>
+        <item>string bean</item>
+        <item>stringy</item>
+        <item>strudel</item>
+        <item>sub sandwich</item>
+        <item>submarine sandwich</item>
+        <item>succotash</item>
+        <item>suet</item>
+        <item>sugar</item>
+        <item>summer squash</item>
+        <item>sundae</item>
+        <item>sunflower</item>
+        <item>supper</item>
+        <item>sushi</item>
+        <item>sustenance</item>
+        <item>sweet</item>
+        <item>sweet potato</item>
+        <item>Swiss chard</item>
+        <item>syrup</item>
+
+        <item>taco</item>
+        <item>take-out</item>
+        <item>tamale</item>
+        <item>tangerine</item>
+        <item>tapioca</item>
+        <item>taro</item>
+        <item>tarragon</item>
+        <item>tart</item>
+        <item>tea</item>
+        <item>teapot</item>
+        <item>teriyaki</item>
+        <item>thyme</item>
+        <item>toast</item>
+        <item>toaster</item>
+        <item>toffee</item>
+        <item>tofu</item>
+        <item>tomatillo</item>
+        <item>tomato</item>
+        <item>torte</item>
+        <item>tortilla</item>
+        <item>tuber</item>
+        <item>tuna</item>
+        <item>turkey</item>
+        <item>turmeric</item>
+        <item>turnip</item>
+
+        <item>ugli fruit</item>
+        <item>unleavened</item>
+        <item>utensils</item>
+
+        <item>vanilla</item>
+        <item>veal</item>
+        <item>vegetable</item>
+        <item>venison</item>
+        <item>vinegar</item>
+        <item>vitamin</item>
+
+        <item>wafer</item>
+        <item>waffle</item>
+        <item>walnut</item>
+        <item>wasabi</item>
+        <item>water</item>
+        <item>water chestnut</item>
+        <item>watercress</item>
+        <item>watermelon</item>
+        <item>wheat</item>
+        <item>whey</item>
+        <item>whipped cream</item>
+        <item>wok</item>
+
+        <item>yam</item>
+        <item>yeast</item>
+        <item>yogurt</item>
+        <item>yolk</item>
+
+        <item>zucchini</item>
+    </string-array>
+
     <string-array name="product_example_list">
         <item>`Bakery</item>
         <item>Bagels</item>
@@ -33,15 +719,15 @@
 
         <item>`Fruits &amp; Vegetables</item>
         <item>Acorn Squash</item>
-        <item>Apples - Bag Gala</item>
-        <item>Apples - Bag Golden Delicious</item>
-        <item>Apples - Bag Granny Smith</item>
-        <item>Apples - Bag Red Delicious</item>
+        <item>Gala Apples</item>
+        <item>Golden Delicious Apple</item>
+        <item>Granny Smith Apple</item>
+        <item>Red Delicious Apple</item>
         <item>Apricot</item>
         <item>Asparagus</item>
         <item>Avocados</item>
         <item>Baby Carrots</item>
-        <item>Baby Spinach - Bag</item>
+        <item>Baby Spinach</item>
         <item>Bananas</item>
         <item>Black Raspberries</item>
         <item>Blueberries</item>
@@ -57,7 +743,7 @@
         <item>Cherries</item>
         <item>Cherry Tomatoes</item>
         <item>Chili Pepper</item>
-        <item>Clementine\'s</item>
+        <item>Clementine</item>
         <item>Eggplant</item>
         <item>Fresh Herbs</item>
         <item>Garlic Clove</item>
@@ -93,7 +779,7 @@
         <item>Sweet Corn</item>
         <item>Sweet Potatoes</item>
         <item>Yams</item>
-        <item>Tomatoes</item>
+        <item>Diced Tomatoes</item>
         <item>Vandalia Onion</item>
         <item>Watermelon</item>
         <item>White Onions</item>
@@ -112,6 +798,9 @@
         <item>Pineapple</item>
         <item>Plum</item>
         <item>Cilantro</item>
+        <item>Fresh Parsley</item>
+        <item>Green Onion</item>
+        <item>tomatoes</item>
 
 
         <item>`Beer, Wine &amp; Liquor</item>
@@ -409,8 +1098,7 @@
 
 
         <item>`Meat &amp; Seafood</item>
-        <item>Steaks</item>
-        <item>Filet</item>
+        <item>Steak</item>
         <item>Flank</item>
         <item>New York Strip</item>
         <item>Pork Steak</item>
@@ -424,13 +1112,14 @@
         <item>Split Breast</item>
         <item>Whole Chicken</item>
         <item>Wings</item>
+        <item>Ground Beef</item>
+        <item>Ground Beef</item>
+        <item>Pork Chop</item>
 
 
-
-        <item>`Seafood</item>
-        <item>Catfish - fresh</item>
-        <item>Cod Fillet - fresh</item>
-        <item>Crab Meat - chunks</item>
+        <item>Catfish</item>
+        <item>Cod</item>
+        <item>Crab Meat</item>
         <item>Escargot</item>
         <item>Halibut</item>
         <item>King Crab Legs</item>
@@ -445,6 +1134,7 @@
         <item>Tilapia</item>
         <item>Trout</item>
         <item>Tuna</item>
+        <item>Tuna steak</item>
 
 
         <item>`Breads</item>

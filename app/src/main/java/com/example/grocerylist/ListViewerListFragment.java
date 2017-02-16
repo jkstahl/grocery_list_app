@@ -232,6 +232,7 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 	private class ProductInListAdapter extends ArrayAdapter<Object> {
 		private static final int PRODUCT_TYPE = 0;
 		private static final int CATEGORY_TYPE = 1;
+		private static final int PRODUCT_NAME_MAX_SIZE = 30;
 
 		private WorkingProductCursorWrapper listCursor;
 		List<Object> items;
@@ -319,7 +320,10 @@ public class ListViewerListFragment extends ListFragment implements LoaderManage
 					Product wp = (Product) items.get(position);
 
 					TextView tv = (TextView) convertView.findViewById(R.id.g_list_name);
-					tv.setText((String) wp.get("NAME"));
+					String productName = (String) wp.get("NAME");
+					if (productName.length() > PRODUCT_NAME_MAX_SIZE)
+						productName = productName.substring(0, PRODUCT_NAME_MAX_SIZE) + "...";
+					tv.setText(productName);
 					tv = (TextView) convertView.findViewById(R.id.text_listi_quantity);
 					float quantity = (Float) wp.get("QUANTITY");
 					String units = (String) wp.get("UNITS");

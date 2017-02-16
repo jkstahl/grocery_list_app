@@ -598,4 +598,12 @@ public class ProductListDB extends SQLiteOpenHelper {
         cv.put("TIMESTAMP", (int) newStartTime);
         db.update(Product.TABLE_PRODUCTS,cv, "_id=" +id,null);
     }
+
+    public Cursor getUniqueTypes() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        //ProductExamples.TABLE_NAME
+        //return db.query(true, Product.TABLE_PRODUCTS, new String[]{"TYPE"},null,null,null,null,"TYPE",null);
+        return db.rawQuery("SELECT DISTINCT TYPE FROM (SELECT TYPE FROM PRODUCTS UNION ALL SELECT TYPE FROM PRODUCT_EXAMPLES) ORDER BY TYPE",null);
+
+    }
 }

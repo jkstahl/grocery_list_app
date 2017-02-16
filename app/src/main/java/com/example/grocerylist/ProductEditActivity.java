@@ -1,14 +1,18 @@
 package com.example.grocerylist;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.reginald.editspinner.EditSpinner;
 
 public class ProductEditActivity extends Activity {
     public static final int OK=0;
@@ -19,7 +23,7 @@ public class ProductEditActivity extends Activity {
     private EditText productName;
     private EditText productQuantity;
     private Spinner productUnits;
-    private EditText productType;
+    private EditSpinner productType;
     private String id;
     ProductPackager pp;
     public static String[] unitTypes = {"", "ounces", "pounds", "cups", "quarts", "liters"};
@@ -45,8 +49,21 @@ public class ProductEditActivity extends Activity {
             if (inputIntent.getStringExtra("UNITS").equals(unitTypes[i]))
                 productUnits.setSelection(i);
 
-        productType = ((EditText) findViewById(R.id.edit_pedit_type));
+        productType = ((EditSpinner) findViewById(R.id.edit_pedit_type));
         productType.setText(inputIntent.getStringExtra("TYPE"));
+        Cursor typeCursor = DatabaseHolder.getDatabase(this).getUniqueTypes();
+        String[] typeArray = new String[typeCursor.getCount()];
+        if (typeCursor.moveToFirst()) {
+            int i=0;
+            do {
+                typeArray[i] = typeCursor.getString(typeCursor.getColumnIndex("TYPE"));
+                i++;
+            } while (typeCursor.moveToNext());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, typeArray);
+        productType.setAdapter(adapter);
+
 
         pp.setView("NAME", productName);
         pp.setView("TYPE", productType);

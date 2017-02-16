@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
  */
 
 public class ProductUnitExtractor {
+    private final String fractionNumberUnitsString;
     //TODO Make this static
     private Pattern fractionParser;
     private Pattern numberWordParserSearch;
@@ -28,6 +29,9 @@ public class ProductUnitExtractor {
     private Map<String, String> commonToUnitsMap;
     private Pattern numberWordSearch;
     private final String TAG="unitextractor";
+    private String quantityUnitsString;
+    String fractionRegex;
+    String numberRegex;
 
     public ProductUnitExtractor() {
         //unitsUsable = new String[] {"each", "ounce", "pound", "quart", "pint","cup", "teaspoon", "tablespoon", "liter", "gram", "miligram", "liter", "mililiter", "roll", "can","slice","stick", "pack"};
@@ -79,7 +83,7 @@ public class ProductUnitExtractor {
         }
 
         // build the pattern
-        String fractionRegex = "([0-9]* )?[0-9]+[ ]?/[ ]?[0-9]+";
+        fractionRegex = "([0-9]* )?[0-9]+[ ]?/[ ]?[0-9]+";
         String numberWordPatternString = "(?i)(^| )(" + join(numberWords, " *|") + " *|"+fractionRegex+")+ ";
         numberWordSearch = Pattern.compile(numberWordPatternString);
         String numberWordParserPatternString = "(?i)(" + join(numberWords, " *|") + " *)";
@@ -131,18 +135,24 @@ public class ProductUnitExtractor {
 
         String unitSearch = join(usableUnitsPlural, "|");
         unitSearch += ("|" + join(unitsNotUsable, "[ ]+|"));
-        String numberRegex = "[0-9]+[.][0-9]+|[0-9]+|[.][0-9]+|[0-9]+[.]|[0-9]+/[0-9]+";
-        String quantityUnitsString = "(?i)("+ numberRegex +")\\s*(" + unitSearch+ "[ ]+)";
+        numberRegex = "[0-9]+[.][0-9]+|[0-9]+|[.][0-9]+|[0-9]+[.]|[0-9]+/[0-9]+";
+        quantityUnitsString = "(?i)("+ numberRegex +")\\s*(" + unitSearch+ "[ ]+)";
         quantityUnitsPattern = Pattern.compile(quantityUnitsString);
         String quantityProductString = "^(?i)(" + numberRegex +")\\s+([a-zA-Z. ]+)";
         quantityProductPattern = Pattern.compile(quantityProductString);
+
+        fractionNumberUnitsString = "(?i)(" + fractionRegex + "|" + numberRegex + ")\\s*(" + unitSearch+ "[ ]+)";
     }
 
     public static String[] getAllUnits() {
         return unitsUsable;
     }
 
-    private String join(String[] array, String joinString) {
+    public String getQuantityUnitsString(){
+        return quantityUnitsString;
+    }
+
+    public static String join(String[] array, String joinString) {
         String returnString = "";
         if (array.length > 0)
             returnString += array[0];
@@ -153,7 +163,9 @@ public class ProductUnitExtractor {
         return returnString;
     }
     
-    
+    public String getFractionOrNumberPatternString() {
+        return  fractionNumberUnitsString;
+    }
 
     public QuantityUnitPackage getUnitsProductFromString(String productString) {
         // Case insensative
@@ -208,7 +220,7 @@ public class ProductUnitExtractor {
         return returnPackage;
     }
 
-    private String wordsToNumbers(String workingString) {
+    public String wordsToNumbers(String workingString) {
         // check for 1 1/4 type number
         Matcher m = numberWordSearch.matcher(workingString);
         String numberSequence="";

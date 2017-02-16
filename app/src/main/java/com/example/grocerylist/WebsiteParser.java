@@ -9,15 +9,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.Policy;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +62,7 @@ public class WebsiteParser {
         Pattern ingredientFinderPattern = (new ProductUnitExtractor()).getQuantityProductPattern();
         FormattedData returnData = new FormattedData();
         HttpURLConnection urlConnection=null;
+        ProductUnitExtractor pue = new ProductUnitExtractor();
 
         boolean useDrillBit  = false;
         boolean foundSerings=false;
@@ -94,11 +99,13 @@ public class WebsiteParser {
             String line=null;
             int drillBitIndex=0;
             String fullText = "";
+            String fullTextLines = "";
             while ((line = in.readLine()) != null) {
                 //Log.d(TAG, line);
                 //if (line.contains("Somali Spaghetti Sauce"))
                 //    System.out.println(line);
                 fullText += line;
+                fullTextLines += line + "\n";
             }
             if (useDrillBit) {
                 Matcher m;
@@ -168,8 +175,95 @@ public class WebsiteParser {
                     System.out.println(fullText);
                 }
             }*/
+            } else {
+                //String linePure = fullText.replaceAll("<([/]?[a-zA-Z0-9])+>", "");
+                String linePure = fullTextLines;
+                BufferedReader br = new BufferedReader(new StringReader(linePure));
+                Set<String> foodNouns = new HashSet<>();
+                List<Integer> ingredientLines=new ArrayList<>();
+
+                try {
+
+                    String removeChars = "\\n\"<>,.";
+                    int lineNum = 0;
+                    while ((line = br.readLine()) != null) {
+                        // Build a list of words from the
+                        List<String> wordsInLine = new ArrayList<>();
+                        String[] words = line.split("[ ]+");
+                        Set<String> foodWords = WordList.getFoodWordSet();
+                        for (int i=0; i<words.length; i++) {
+                            words[i] = words[i].replaceAll("(["+ removeChars+"]|s$)", "").toLowerCase();
+                            //words[i] = words[i].replaceAll("s$", ""); // remove plural
+                            if (foodWords.contains(words[i])) {
+                                wordsInLine.add(words[i]);
+                            }
+                        }
+                        String patternString = ProductUnitExtractor.join(wordsInLine.toArray(new String[wordsInLine.size()]), ".*");
+                        patternString = pue.getFractionOrNumberPatternString() + ".*" + patternString + "[\\w]*]";
+                        //String line2 = pue.wordsToNumbers(line);
+                        String line2 = line;
+                        //System.out.println(patternString);
+                        Pattern numberUnitFoodPattern = Pattern.compile(patternString);
+                        Matcher m = pue.getQuantityProductPattern().matcher(line);
+                        //if (m.find())
+                        //    System.out.println("Found");
+                        if (wordsInLine.size() > 0) {
+                            //System.out.println(wordsInLine.toString());
+                            // do a search with quantity and units.
+                            m = numberUnitFoodPattern.matcher(line2);
+                            if (m.find()) {
+                                String found = line.substring(m.start(), m.end() + (line.length()-line2.length()));
+                                System.out.println(found.trim());
+                                String ingredientName = found.trim();
+                                Ingredients newIngredient = new Ingredients();
+                                newIngredient.put("NAME", ingredientName);
+                                returnData.ingredients.add(newIngredient);
+                                foodNouns.addAll(wordsInLine);
+                                ingredientLines.add(lineNum);
+                            }
+                        }
+                        lineNum++;
+                    }
+
+
+                    // look for directions
+                    br = new BufferedReader(new StringReader(linePure));
+                    lineNum = 0;
+                    Set<String> cookingVerbsSet = WordList.getCookingVerbs();
+                    Pattern titlePattern = Pattern.compile("<title>(.*)</title>");
+                    while ((line = br.readLine()) != null) {
+                        Matcher match = titlePattern.matcher(line);
+                        if (match.find())
+                            returnData.recipe.put("NAME", match.group(1).trim().replaceAll("<[\\w\\d]+>", ""));
+                        if (!ingredientLines.contains(lineNum)) {
+                            String[] words = line.split("[ ]+");
+                            int foodCount = 0;
+                            int verbCount = 0;
+                            for (int i = 0; i < words.length; i++) {
+                                words[i] = words[i].replaceAll("[" + removeChars + "]", "").toLowerCase();
+                                if (foodNouns.contains(words[i]))
+                                    foodCount++;
+                                else if (cookingVerbsSet.contains(words[i]))
+                                    verbCount++;
+
+                            }
+                            if (foodCount >= 1 && verbCount>=1) {
+                                System.out.println(line);
+                                String current = (String)returnData.recipe.get("INSTRUCTIONS");
+                                Pattern instructionClipper = Pattern.compile("[\\w\\d.,!;:\\-#]*"++"[\\w\\d.,!;:\\-#]*");
+                                returnData.recipe.put("INSTRUCTIONS", current );
+                            }
+                        }
+                        lineNum++;
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
-        } catch (Exception e) {
+            } catch (Exception e) {
             e.printStackTrace();
             try {
                 urlConnection.disconnect();
